@@ -33,7 +33,7 @@
     Description       = 'Omnicit PowerShell Toolbox - OPT'
 
     # Minimum version of the Windows PowerShell engine required by this module
-    # PowerShellVersion = ''
+    PowerShellVersion = '4.0'
 
     # Name of the Windows PowerShell host required by this module
     # PowerShellHostName = ''
@@ -95,7 +95,7 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags         = @('Toolbox', 'Office365', 'ActiveDirectory')
+            Tags         = @('Toolbox', 'Office365', 'ActiveDirectory', 'Exchange', 'Data')
 
             # A URL to the license for this module.
             LicenseUri   = 'https://github.com/Omnicit/Omnicit/blob/master/LICENSE'
@@ -104,7 +104,7 @@
             ProjectUri   = 'https://github.com/Omnicit/Omnicit'
 
             # A URL to an icon representing this module.
-            IconUri = 'https://github.com/Omnicit/Omnicit/blob/master/Omnicit-Icon.png'
+            IconUri      = 'https://raw.githubusercontent.com/Omnicit/Omnicit/master/Omnicit_Icon.png'
 
             # ReleaseNotes of this module
             ReleaseNotes = 'https://github.com/Omnicit/Omnicit/blob/master/ReleaseNotes.md'
