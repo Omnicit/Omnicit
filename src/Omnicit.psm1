@@ -1,5 +1,3 @@
-# Implement your module commands in this script.
-
 # Helper functions
 function Write-Log {
     <#
@@ -76,6 +74,3 @@ function Write-Log {
 
 # Dot source the module function files.
 . $PSScriptRoot\Invoke-ModuleUpdate.ps1
-
-# Export only the functions using PowerShell standard verb-noun naming.
-Export-ModuleMember -Function *-*

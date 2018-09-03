@@ -67,7 +67,7 @@ function Invoke-ModuleUpdate {
     Created by:     Philip Haglund
     Organization:   Omnicit AB
     Filename:       Invoke-ModuleUpdate.ps1
-    Version:        0.1.0
+    Version:        1.0.0
     Requirements:   Powershell 4.0
     #>
     [CmdletBinding(
@@ -115,7 +115,6 @@ function Invoke-ModuleUpdate {
         try {
             [array]$Modules = (Get-Module -Name $Name -ListAvailable -ErrorAction Stop -Verbose:$false).Where{$null -ne $_.RepositorySourceLocation}
 
-            # Sort the modules using the Length of the 'Name' property (pipeline with PSCustomObject uses the default 8 char length and trims output with dots.)
             # Group all modules to exclude multiple versions.
             [array]$Modules = $Modules | Group-Object -Property Name
             [int]$TotalCount = $Modules.Count
@@ -136,15 +135,6 @@ function Invoke-ModuleUpdate {
             $PSCmdLet.WriteError($ErrRecord)
             break
         }
-        <#try {
-            Update-FormatData -PrependPath $PSScriptRoot\Invoke-ModuleUpdate.format.ps1xml -ErrorAction Stop
-            $FormatData = $true
-        }
-        catch {
-            $FormatData = $false
-            Write-Warning -Message ('Unable to Update-FormatData. Error {0}' -f $_.Exception.Message)
-            Write-Verbose -Message 'Output format may not be correct displayed.'
-        }#>
 
         try {
             # To speed up the 'Find-Module' cmdlet and not query all existing repositories, save all existing repositories.
@@ -153,7 +143,7 @@ function Invoke-ModuleUpdate {
             if ($PSCmdLet.ParameterSetName -eq 'Update' -and $Repositories.InstallationPolicy -contains 'Untrusted' -and $TotalCount -gt 1) {
                 Write-Verbose -Message 'One or more repositories have the InstallationPolicy set to Untrusted.'
                 Write-Verbose -Message 'The function will temporary set all repositories to Trusted to avoid continues prompts of "Set-PSRepository" and revert back after finished updating.'
-                $RepoChanged = $true
+                $RepositoryChanged = $true
                 foreach ($Repository in $Repositories) {
                     Set-PSRepository -Name $Repository.Name -InstallationPolicy Trusted -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -Verbose:$false
                 }
@@ -173,16 +163,16 @@ function Invoke-ModuleUpdate {
             [int]$PercentComplete = ' {0:N0}' -f (($Modules.IndexOf($Group) / $TotalCount) * 100)
             Write-Progress -Activity (' {0} {1}' -f $Status, $Group.Group[0].Name) -Status (' {0}% Complete:' -f $PercentComplete) -PercentComplete $PercentComplete
 
-            if ($PSCmdlet.ShouldProcess((' {0}' -f $Group.Group[0].Name), $MyInvocation.MyCommand.Name)) {
+            if ($PSCmdlet.ShouldProcess(('{0}' -f $Group.Group[0].Name), $MyInvocation.MyCommand.Name)) {
                 $MultipleVersions = @()
                 switch ($Group.Count) {
                     ( {$PSITem -gt 1}) {
                         [string[]]$MultipleVersions = $Group.Group.Version[1..($Group.Group.Version.Length)]
-                        [psmoduleinfo]$Module = (($Group).Group | Sort-Object -Property Version -Descending)[0]
+                        [PSModuleInfo]$Module = (($Group).Group | Sort-Object -Property Version -Descending)[0]
                     }
                     Default {
                         $MultipleVersions = $null
-                        [psmoduleinfo]$Module = $Group.Group[0]
+                        [PSModuleInfo]$Module = $Group.Group[0]
                     }
                 }
                 try {
@@ -222,24 +212,20 @@ function Invoke-ModuleUpdate {
                     }
                 }
 
-                $PSObject = [PSCustomObject]@{
+                # Output result to pipeline
+                [PSCustomObject]@{
+                    'PSTypeName'        = 'Omnicit.Invoke.ModuleUpdate'
                     'Name'              = [string]$Module.Name
                     'Current Version'   = $CurrentVersion
                     'Online Version'    = $Online.Version
                     'Multiple Versions' = $MultipleVersions
                 }
-
-                #if ($FormatData) {
-                    $PSObject.PSObject.TypeNames.Insert(0, 'Omnicit.Invoke.ModuleUpdate')
-                #}
-
-                $PSObject
             }
         }
     }
     end {
         try {
-            if ($RepoChanged) {
+            if ($RepositoryChanged) {
                 Write-Verbose -Message 'Reverting back installation policies for repositories.'
                 foreach ($Repository in $Repositories) {
                     Set-PSRepository -Name $Repository.Name -InstallationPolicy $Repository.InstallationPolicy -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -Verbose:$false

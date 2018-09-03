@@ -21,10 +21,10 @@
     GUID              = 'ac164fd4-5867-4b95-a13a-67efcff66f12'
 
     # Author of this module
-    Author            = 'Omnicit'
+    Author            = 'Philip Haglund @ Omnicit'
 
     # Company or vendor of this module
-    CompanyName       = 'Unknown'
+    CompanyName       = 'Omnicit AB'
 
     # Copyright statement for this module
     Copyright         = '(c) 2018 Omnicit. All rights reserved.'
@@ -72,13 +72,13 @@
     FunctionsToExport = @('Invoke-ModuleUpdate')
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    CmdletsToExport   = @()
+    # CmdletsToExport   = @()
 
     # Variables to export from this module
-    VariablesToExport = @()
+    # VariablesToExport = @()
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport   = @()
+    # AliasesToExport   = @()
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -104,13 +104,13 @@
             ProjectUri   = 'https://github.com/Omnicit/Omnicit'
 
             # A URL to an icon representing this module.
-            # IconUri = ''
+            IconUri = 'https://github.com/Omnicit/Omnicit/blob/master/Omnicit-Icon.png'
 
             # ReleaseNotes of this module
             ReleaseNotes = 'https://github.com/Omnicit/Omnicit/blob/master/ReleaseNotes.md'
 
             # Indicates this is a pre-release/testing version of the module.
-            IsPrerelease = 'True'
+            Prerelease = '-alpha100'
 
         } # End of PSData hashtable
 
