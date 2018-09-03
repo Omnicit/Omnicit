@@ -21,13 +21,13 @@
     GUID              = 'ac164fd4-5867-4b95-a13a-67efcff66f12'
 
     # Author of this module
-    Author            = 'Philip Haglund @ Omnicit'
+    Author            = 'Omnicit'
 
     # Company or vendor of this module
     CompanyName       = 'Omnicit AB'
 
     # Copyright statement for this module
-    Copyright         = '(c) 2018 Omnicit. All rights reserved.'
+    Copyright         = '(c) 2018 Omnicit AB. All rights reserved.'
 
     # Description of the functionality provided by this module
     Description       = 'Omnicit PowerShell Toolbox - OPT'
@@ -95,7 +95,7 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags         = @('Toolbox', 'Office365', 'ActiveDirectory', 'Exchange', 'Data')
+            Tags         = @('Toolbox', 'Office365', 'ActiveDirectory', 'String', 'Data', 'Credential', 'PSEdition_Desktop')
 
             # A URL to the license for this module.
             LicenseUri   = 'https://github.com/Omnicit/Omnicit/blob/master/LICENSE'
@@ -110,7 +110,7 @@
             ReleaseNotes = 'https://github.com/Omnicit/Omnicit/blob/master/ReleaseNotes.md'
 
             # Indicates this is a pre-release/testing version of the module.
-            Prerelease = '-alpha100'
+            PreRelease = '-alpha101'
 
         } # End of PSData hashtable
 
