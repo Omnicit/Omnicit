@@ -1,8 +1,7 @@
 # Omnicit
 Omnicit PowerShell Toolbox - OPT
 
-
-[![Build status](https://ci.appveyor.com/project/Omnicit/Omnicit)](https://ci.appveyor.com/project/Omnicit/Omnicit)
+[![Build status](https://ci.appveyor.com/api/projects/status/ijobkkrrtk9ltbdi?svg=true)](https://ci.appveyor.com/project/Omnicit/omnicit)
 
 The Omnicit PowerShell Toolbox (OPT) will help with everyday tasks when managing various systems, services and data.
 
