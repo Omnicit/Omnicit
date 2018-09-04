@@ -1,11 +1,9 @@
-# Dot source this script in any Pester test script that requires the module to be imported.
+$ModuleManifestName  = 'Plaster.psd1'
+$ModuleManifestPath  = "$PSScriptRoot\..\src\$ModuleManifestName"
+$TemplateDir         = "$PSScriptRoot\TemplateRootTemp"
+$OutDir = "$PSScriptRoot\Out"
 
-$ModuleManifestName = 'Omnicit.psd1'
-$ModuleManifestPath = "$PSScriptRoot\..\src\$ModuleManifestName"
 
 if (!$SuppressImportModule) {
-    # -Scope Global is needed when running tests from inside of psake, otherwise
-    # the module's functions cannot be found in the Omnicit\ namespace
-    Import-Module $ModuleManifestPath -Scope Global
+    $OmnicitModule = Import-Module $ModuleManifestPath -Scope Global -PassThru
 }
-
