@@ -11,4 +11,5 @@ As of now the module is not split up in different subareas or prefixes. If there
 
 
 # SEE ALSO
-- https://github.com/Omnicit/Omnicit
+- [Omnicit Cmdlets](https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Omnicit.md)
+- [Omnicit README](https://github.com/Omnicit/Omnicit)

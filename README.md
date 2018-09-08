@@ -11,7 +11,7 @@ If you have the [PowerShellGet](https://msdn.microsoft.com/powershell/gallery/re
 you can enter the following command:
 
 ```PowerShell
-Install-Module Omnicit -Scope CurrentUser
+Install-Module -Name Omnicit -Scope CurrentUser
 ```
 
 ## Documentation
@@ -19,14 +19,13 @@ Install-Module Omnicit -Scope CurrentUser
 You can learn how to use the functions by reading our documentation:
 
 - [About Omnicit](docs/en-US/about_Omnicit.help.md)
-- [Cmdlet Documentation](docs/en-US/Omnicit.md)
+- [Cmdlet Overview](docs/en-US/Omnicit.md)
 
 ## Maintainers
 
 - [Omnicit](https://github.com/Omnicit) - [@OmnicitAB](https://twitter.com/OmnicitAB)
 - [Philip Haglund](https://github.com/PhilipHaglund) - [@KPHaglund](http://twitter.com/KPHaglund)
-- [You?](https://github.com/PhilipHaglund) - [Contact us](mailto:info@omnicit.se)
 
 ## License
 
-This project is [licensed under the MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
