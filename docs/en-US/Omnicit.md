@@ -6,9 +6,8 @@ Locale: en-US
 
 # Omnicit Module
 ## Description
-{{Manually Enter Description Here}}
+The Omnicit PowerShell Toolbox (OPT) will help with everyday tasks when managing various systems, services and data.
 
 ## Omnicit Cmdlets
 ### [Invoke-ModuleUpdate](Invoke-ModuleUpdate.md)
-{{Manually Enter Invoke-ModuleUpdate Description Here}}
-
+Update one, several or all installed modules if an update is available from a repository location.
