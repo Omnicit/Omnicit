@@ -74,3 +74,4 @@ function Write-Log {
 
 # Dot source the module function files.
 . $PSScriptRoot\Invoke-ModuleUpdate.ps1
+. $PSScriptRoot\Format-StringToUnicodeNormalization.ps1
