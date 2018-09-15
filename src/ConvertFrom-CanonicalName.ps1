@@ -69,7 +69,7 @@ function ConvertFrom-CanonicalName {
                     [bool]$Domain = $true
                 }
                 # Divide string into an array and replace
-                $String = $Name.Split('/')
+                [string[]]$String = $Name.Split('/')
 
                 # Create the first part of the string.
                 if ($PSBoundParameters.ContainsKey('OrganizationalUnit')) {
