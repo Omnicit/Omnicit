@@ -73,5 +73,6 @@ function Write-Log {
 # Helper variables
 
 # Dot source the module function files.
-. $PSScriptRoot\Invoke-ModuleUpdate.ps1
+. $PSScriptRoot\ConvertFrom-CanonicalName.ps1
 . $PSScriptRoot\Format-StringToUnicodeNormalization.ps1
+. $PSScriptRoot\Invoke-ModuleUpdate.ps1
