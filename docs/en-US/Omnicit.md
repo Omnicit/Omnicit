@@ -9,5 +9,7 @@ Locale: en-US
 The Omnicit PowerShell Toolbox (OPT) will help with everyday tasks when managing various systems, services and data.
 
 ## Omnicit Cmdlets
+### [ConvertFrom-CanonicalName](ConvertFrom-CanonicalName.md)
+### [Format-StringToUnicodeNormalization](Format-StringToUnicodeNormalization.md)
 ### [Invoke-ModuleUpdate](Invoke-ModuleUpdate.md)
 Update one, several or all installed modules if an update is available from a repository location.
