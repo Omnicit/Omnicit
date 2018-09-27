@@ -124,7 +124,7 @@ function Invoke-ModuleUpdate {
                     [string]$Status = 'Updating module'
                 }
                 Default {
-                    [string]$Status = 'Looking for the latest version for module'
+                    [string]$Status = 'Looking for the latest version of module'
                 }
             }
         }
@@ -138,9 +138,9 @@ function Invoke-ModuleUpdate {
 
         try {
             # To speed up the 'Find-Module' cmdlet and not query all existing repositories, save all existing repositories.
-            [PSCustomObject]$Repositories = Get-PSRepository -ErrorAction Stop
+            [array][PSCustomObject]$Repositories = Get-PSRepository -ErrorAction Stop
 
-            if ($PSCmdLet.ParameterSetName -eq 'Update' -and $Repositories.InstallationPolicy -contains 'Untrusted' -and $TotalCount -gt 1) {
+            if ($PSCmdLet.ParameterSetName -eq 'Update' -and $Repositories.InstallationPolicy -contains 'Untrusted') {
                 Write-Verbose -Message 'One or more repositories have the InstallationPolicy set to Untrusted.'
                 Write-Verbose -Message 'The function will temporary set all repositories to Trusted to avoid continues prompts of "Set-PSRepository" and revert back after finished updating.'
                 $RepositoryChanged = $true
