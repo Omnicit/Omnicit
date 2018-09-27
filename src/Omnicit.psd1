@@ -110,7 +110,7 @@
             ReleaseNotes = 'https://github.com/Omnicit/Omnicit/blob/master/ReleaseNotes.md'
 
             # Indicates this is a pre-release/testing version of the module.
-            PreRelease = '-alpha102'
+            #PreRelease = ''
 
         } # End of PSData hashtable
 
