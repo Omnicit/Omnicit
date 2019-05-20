@@ -1,36 +1,28 @@
 function ConvertFrom-DistinguishedName {
     <#
     .SYNOPSIS
-    Convert a CanonicalName string to a DistinguishedName string.
+    Convert a DistinguishedName string to a CanonicalName string.
 
     .DESCRIPTION
-    The ConvertFrom-CanonicalName converts one or more strings in form of a CanonicalName into DistinguishedName strings.
+    The ConvertFrom-DistinguishedName converts one or more strings in form of a DistinguishedName into CanonicalName strings.
     Common usage when working in Exchange and comparing objects in Active Directory.
 
-    .PARAMETER CanonicalName
-    Specifies the CanonicalName string to be converted to a DistinguishedName string.
-
-    .PARAMETER OrganizationalUnit
-    Specifies that the object is an OrganizationalUnit (OU=) instead of an Person (CN=).
+    .PARAMETER DistinguishedName
+    Specifies the DistinguishedName string to be converted to a CanonicalName string.
 
     .EXAMPLE
-    ConvertFrom-CanonicalName -CanonicalName 'Contoso.com/Department/Users/Roger Johnsson'
-    CN=Roger Johnsson,OU=Users,OU=Department,DC=Contoso,DC=com
+    ConvertFrom-DistinguishedName -DistinguishedName 'CN=Roger Johnsson,OU=Users,OU=Department,DC=Contoso,DC=com'
+    Contoso.com/Department/Users/Roger Johnsson
 
-    This example returns the converted CanonicalName in form of a DistinguishedName.
-
-    .EXAMPLE
-    ConvertFrom-CanonicalName -CanonicalName 'Contoso.com/Department/Users' -OrganizationalUnit
-    OU=Users,OU=Department,DC=Contoso,DC=com
-
-    This example returns the converted CanonicalName in form of a DistinguishedName. In this case the last object after slash '/' is an OrganizationalUnit.
+    This example returns the converted DistinguishedName in form of a CanonicalName.
 
     .EXAMPLE
-    ConvertFrom-CanonicalName -CanonicalName 'Contoso.com/Department/Users/Roger Johnsson', 'Contoso.com/Tier1/Users/Bill T Admin'
-    CN=Roger Johnsson,OU=Users,OU=Department,DC=Contoso,DC=com
-    CN=Bill T Admin,OU=Users,OU=Tier1,DC=Contoso,DC=com
+    ConvertFrom-DistinguishedName -DistinguishedName 'CN=Roger Johnsson,OU=Users,OU=Department,DC=Contoso,DC=com', 'CN=Bill T Admin,OU=Users,OU=Tier1,DC=Contoso,DC=com'
+    Contoso.com/Department/Users/Roger Johnsson
+    Contoso.com/Tier1/Users/Bill T Admin
 
-    This example returns each CanonicalName converted in form of a DistinguishedName.
+
+    This example returns each DistinguishedName converted in form of a CanonicalName.
     #>
     [OutputType([System.String])]
     [CmdletBinding(
@@ -50,18 +42,25 @@ function ConvertFrom-DistinguishedName {
         foreach ($Name in $DistinguishedName) {
             if ($PSCmdlet.ShouldProcess(('{0}' -f $Name, $MyInvocation.MyCommand.Name))) {
 
-                #$OU = @()
-                # Divide string into an array and replace '\,' with '~'
-                $String = $Name.Replace('\,', '~').Split(',')
+                # If the DistinguishedName string contains escaped backslashes from Active Directory or misspelled backslashes this will be taken care of.
+                $Esc = $Name.ToCharArray()
+                $String = for ($c = 0; $c -lt $Esc.Count; $c ++) {
+                    switch ($Esc[$c]) {
+                        { $Esc[$c] -eq $s -and $Esc[$c + 1] -eq $s -and $Esc[$c - 1] -eq $s -and $Esc[$c + 2] -ne $s -and $Esc[$c - 2] -ne $s } { $Esc[$c] + '\'; continue }
+                        { $Esc[$c] -eq $s -and $Esc[$c + 1] -ne $s -and $Esc[$c - 1] -ne $s } { $Esc[$c] + '\'; continue }
+                        Default { $Esc[$c] }
+                    }
+                }
+                $String = ($String -join '').Split(',')
 
                 foreach ($SubString in $String) {
-                    # Remove leading white spaces
                     $SubString = $SubString.TrimStart()
 
                     # Replace each DistinguishedName indicator with a corresponding leading or trailing char for CanonicalName.
-                    switch -Regex ($SubString.SubString(0, 3)) {
+                    Write-Verbose -Message $SubString.SubString(0, 3)
+                    switch ($SubString.SubString(0, 3)) {
                         'CN=' {
-                            [string]$CN = '/{0}' -f ($SubString -replace 'CN=')
+                            [string]$CN = '{0}' -f ($SubString -replace 'CN=')
                             continue
                         }
                         'OU=' {
@@ -75,17 +74,17 @@ function ConvertFrom-DistinguishedName {
                     }
                 }
 
-                [string]$Canonical = $DC.TrimEnd('.')
+                [string]$Canonical = $DC -replace '\.$', '/'
                 for ($i = $OU.Count; $i -ge 0; $i --) {
                     [string]$Canonical += $OU[$i]
                 }
 
                 if ($CN) {
-                    [string]$Canonical += $CN.ToString().Replace('~', ',')
+                    [string]$Canonical += $CN
                 }
                 [string]$Canonical
 
-                # Remove
+                # Remove variables for loop processing
                 Remove-Variable -Name Canonical, CN, OU, DC -ErrorAction SilentlyContinue
             }
         }
