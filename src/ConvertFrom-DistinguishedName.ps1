@@ -31,13 +31,6 @@ function ConvertFrom-DistinguishedName {
     CN=Bill T Admin,OU=Users,OU=Tier1,DC=Contoso,DC=com
 
     This example returns each CanonicalName converted in form of a DistinguishedName.
-
-    .NOTES
-    Created by:     Philip Haglund
-    Organization:   Omnicit AB
-    Filename:       ConvertFrom-CanonicalName.ps1
-    Version:        1.0.0
-    Requirements:   Powershell 4.0
     #>
     [OutputType([System.String])]
     [CmdletBinding(

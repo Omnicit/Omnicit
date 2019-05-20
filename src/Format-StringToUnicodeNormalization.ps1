@@ -25,13 +25,6 @@
     uuaaoAAO??AEEE?EDNO?c?l?
 
     This example returns the converted value with Unicode Normalization using encoding ISO-8859-8 and removes all questions marks which was a result of chars that were unavailable for conversion.
-
-    .NOTES
-    Created by:     Philip Haglund
-    Organization:   Omnicit AB
-    Filename:       Format-StringToUnicodeNormalization.ps1
-    Version:        1.0.0
-    Requirements:   Powershell 4.0
     #>
     [OutputType([System.String])]
     [CmdletBinding(
