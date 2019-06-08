@@ -42,7 +42,7 @@ function ConvertFrom-DistinguishedName {
         foreach ($Name in $DistinguishedName) {
             if ($PSCmdlet.ShouldProcess(('{0}' -f $Name, $MyInvocation.MyCommand.Name))) {
 
-                # If the DistinguishedName string contains escaped backslashes from Active Directory or misspelled backslashes this will be taken care of.
+                # If the DistinguishedName string contains escaped backslashes from Active Directory or uneven backslashes this will be taken care of.
                 $Esc = $Name.ToCharArray()
                 $String = for ($c = 0; $c -lt $Esc.Count; $c ++) {
                     switch ($Esc[$c]) {
