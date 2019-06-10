@@ -29,21 +29,21 @@ class DistinguishedName : OmnicitString {
             $this.Domain = $Matches['Domain']
         }
         else {
-            Throw ('Unable to find a valid DistinguishedName')
+            throw ('Unable to find a valid DistinguishedName')
         }
     }
 
-    static ConvertToCanonicalName ([string]$DN) {
-        $CN = $null
-        $DC = $null
-        $OU = $null
-        $String = ($DN).Split(',')
+    [string] ConvertToCanonicalName () {
+        [string]$CN = $null
+        [string]$DC = $null
+        [string]$OU = $null
+        [Text.StringBuilder]$Canonical = ''
+        $String = ($this.DistinguishedName) -split '(?<!\\),(?!\,)'
 
         foreach ($SubString in $String) {
             $SubString = $SubString.TrimStart()
 
             # Replace each DistinguishedName indicator with a corresponding leading or trailing char for CanonicalName.
-            Write-Verbose -Message $SubString.SubString(0, 3)
             switch ($SubString.SubString(0, 3)) {
                 'CN=' {
                     [string]$CN = '{0}' -f ($SubString -replace 'CN=')
@@ -60,14 +60,14 @@ class DistinguishedName : OmnicitString {
             }
         }
 
-        [string]$Canonical = $DC -replace '\.$', '/'
+        $Canonical.Append($DC -replace '\.$', '/')
         for ($i = $OU.Count; $i -ge 0; $i --) {
-            [string]$Canonical += $OU[$i]
+            $Canonical.Append($OU[$i])
         }
 
         if ($CN) {
-            [string]$Canonical += $CN
+            $Canonical.Append($CN)
         }
-        [string]$Canonical
+        return [string]$Canonical
     }
 }
