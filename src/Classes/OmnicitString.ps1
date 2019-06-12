@@ -29,17 +29,25 @@ class DistinguishedName : OmnicitString {
             $this.Domain = $Matches['Domain']
         }
         else {
-            throw ('Unable to find a valid DistinguishedName')
+            #Write-Error -Message 'Unable to find a valid DistinguishedName' -Category InvalidData -Exception [System.InvalidCastException] -ErrorAction Stop
+            #[Exception]$Exception = [Exception]::new('Unable to find a valid DistinguishedName')
+            #$Exception = [System.InvalidCastException]::new('Unable to find a valid DistinguishedName')
+            #[Management.Automation.ErrorCategory]$Category = [Management.Automation.ErrorCategory]::InvalidType
+            #[Management.Automation.ErrorRecord]$ErrRecord = [Management.Automation.ErrorRecord]::new($Exception, 1, $Category, $null)
+            #$PSCmdLet.ThrowTerminatingError($ErrRecord)
+            $badObject = 'whatever object caused the issue'
+            $actualException = [System.NotSupportedException]::new('I take exception to your use of this function')
+            $errorRecord = [System.Management.Automation.ErrorRecord]::new($actualException, 'ExampleException1', [System.Management.Automation.ErrorCategory]::InvalidData, $badObject)
+            $PSCmdlet.ThrowTerminatingError($errorRecord)
         }
     }
 
     [string] ConvertToCanonicalName () {
         [string]$CN = $null
-        [string]$DC = $null
-        [string]$OU = $null
+        [Text.StringBuilder]$DC = ''
+        [Object]$OU = [System.Collections.Generic.List[String]]::new()
         [Text.StringBuilder]$Canonical = ''
-        $String = ($this.DistinguishedName) -split '(?<!\\),(?!\,)'
-
+        [string[]]$String = ($this.DistinguishedName) -split '(?<!\\),(?!\,)'
         foreach ($SubString in $String) {
             $SubString = $SubString.TrimStart()
 
@@ -50,24 +58,21 @@ class DistinguishedName : OmnicitString {
                     continue
                 }
                 'OU=' {
-                    [string[]]$OU += , '{0}/' -f ($SubString -replace 'OU=')
+                    [Object]$OU.Add('{0}/' -f ($SubString -replace 'OU='))
                     continue
                 }
                 'DC=' {
-                    $DC += '{0}.' -f ($SubString -replace 'DC=')
+                    $DC.Append('{0}.' -f ($SubString -replace 'DC='))
                     continue
                 }
             }
         }
 
-        $Canonical.Append($DC -replace '\.$', '/')
-        for ($i = $OU.Count; $i -ge 0; $i --) {
-            $Canonical.Append($OU[$i])
-        }
+        [System.Array]::Reverse($OU)
+        [Text.StringBuilder]$Canonical.Append([string]($DC -replace '\.$', '/'))
+        [Text.StringBuilder]$Canonical.Append(-join $OU)
+        [Text.StringBuilder]$Canonical.Append($CN)
 
-        if ($CN) {
-            $Canonical.Append($CN)
-        }
-        return [string]$Canonical
+        return $Canonical.ToString().TrimEnd('/')
     }
 }
