@@ -38,8 +38,7 @@ class Domain {
     }
 }
 
-
-class Test {
+class DistinguishedName {
     hidden [string]$_FullName
     hidden [string]$_CommonName
     hidden [string]$_OrganizationalUnit
@@ -99,7 +98,7 @@ class Test {
         }
     }
 
-    Test([string]$DistinguishedName) {
+    DistinguishedName([string]$DistinguishedName) {
         if ($DistinguishedName -match '^(?:(?<CN>CN=(?<Name>[^,]*)),)?(?:(?<OU>(?:(?:OU)=[^,]+,?)+),)?(?<Domain>(?:DC=[^,]+,?)+)$') {
             $this._FullName = $Matches['Name']
             $this._CommonName = 'CN={0}' -f $Matches['Name']
@@ -163,7 +162,7 @@ class Test {
             break
         }
     }
-    Test([string]$CommonName, [string]$OrganizationalUnit, [string]$Domain) {
+    DistinguishedName([string]$CommonName, [string]$OrganizationalUnit, [string]$Domain) {
         try {
             $this.BuildDistinguishedName($CommonName, $OrganizationalUnit, $Domain)
         }
@@ -229,6 +228,39 @@ class Test {
     }
     hidden [void]BuildDistinguishedName([CommonName]$CN, [OrganizationalUnit]$OU, [Domain]$DN) {
         $this.DistinguishedName = '{0},{1},{2}' -f $CN.ToString(), $OU.ToString(), $DN.ToString()
+    }
+
+    [string] ConvertToCanonicalName () {
+        [string]$CN = $null
+        [Collections.ArrayList]$OU = [Collections.ArrayList]::new()
+        [Text.StringBuilder]$Canonical = [Text.StringBuilder]::new()
+        [Text.StringBuilder]$DC = [Text.StringBuilder]::new()
+        [string[]]$String = ($this.DistinguishedName) -split '(?<!\\),(?!\,)'
+        foreach ($SubString in $String) {
+            $SubString = $SubString.TrimStart()
+            # Remove or replace each Distinguished Name indicator with a corresponding trailing char '/' for CanonicalName.
+            switch ($SubString.SubString(0, 3)) {
+                'CN=' {
+                    [string]$CN = '{0}' -f ($SubString -replace 'CN=')
+                    continue
+                }
+                'OU=' {
+                    $null = $OU.Add('{0}/' -f ($SubString -replace 'OU='))
+                    continue
+                }
+                'DC=' {
+                    $null = $DC.Append('{0}.' -f ($SubString -replace 'DC='))
+                    continue
+                }
+            }
+        }
+
+        [System.Array]::Reverse($OU)
+        [Text.StringBuilder]$Canonical.Append([string]($DC -replace '\.$', '/'))
+        [Text.StringBuilder]$Canonical.Append(-join $OU)
+        [Text.StringBuilder]$Canonical.Append($CN)
+
+        return $Canonical.ToString().TrimEnd('/')
     }
 
     [string]ToString() {
