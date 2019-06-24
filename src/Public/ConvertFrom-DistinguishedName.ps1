@@ -26,66 +26,22 @@ function ConvertFrom-DistinguishedName {
     #>
     [OutputType([System.String])]
     [CmdletBinding(
-        SupportsShouldProcess = $true
+        SupportsShouldProcess
     )]
     param (
         [Parameter(
-            Mandatory = $true,
-            ValueFromPipeline = $true,
+            Mandatory,
+            ValueFromPipeline,
             HelpMessage = 'Input a valid DistinguishedName. Example: "CN=Roger Johnsson,OU=Users,OU=Department,DC=Contoso,DC=com"'
         )]
         [ValidateNotNullorEmpty()]
         [Alias('DN')]
-        [string[]]$DistinguishedName
+        [DistinguishedName[]]$DistinguishedName
     )
     process {
         foreach ($Name in $DistinguishedName) {
             if ($PSCmdlet.ShouldProcess(('{0}' -f $Name, $MyInvocation.MyCommand.Name))) {
-
-                # If the DistinguishedName string contains escaped backslashes from Active Directory or uneven backslashes this will be taken care of.
-                $Esc = $Name.ToCharArray()
-                $String = for ($c = 0; $c -lt $Esc.Count; $c ++) {
-                    switch ($Esc[$c]) {
-                        { $Esc[$c] -eq $s -and $Esc[$c + 1] -eq $s -and $Esc[$c - 1] -eq $s -and $Esc[$c + 2] -ne $s -and $Esc[$c - 2] -ne $s } { $Esc[$c] + '\'; continue }
-                        { $Esc[$c] -eq $s -and $Esc[$c + 1] -ne $s -and $Esc[$c - 1] -ne $s } { $Esc[$c] + '\'; continue }
-                        Default { $Esc[$c] }
-                    }
-                }
-                $String = ($String -join '').Split(',')
-
-                foreach ($SubString in $String) {
-                    $SubString = $SubString.TrimStart()
-
-                    # Replace each DistinguishedName indicator with a corresponding leading or trailing char for CanonicalName.
-                    Write-Verbose -Message $SubString.SubString(0, 3)
-                    switch ($SubString.SubString(0, 3)) {
-                        'CN=' {
-                            [string]$CN = '{0}' -f ($SubString -replace 'CN=')
-                            continue
-                        }
-                        'OU=' {
-                            [string[]]$OU += , '{0}/' -f ($SubString -replace 'OU=')
-                            continue
-                        }
-                        'DC=' {
-                            $DC += '{0}.' -f ($SubString -replace 'DC=')
-                            continue
-                        }
-                    }
-                }
-
-                [string]$Canonical = $DC -replace '\.$', '/'
-                for ($i = $OU.Count; $i -ge 0; $i --) {
-                    [string]$Canonical += $OU[$i]
-                }
-
-                if ($CN) {
-                    [string]$Canonical += $CN
-                }
-                [string]$Canonical
-
-                # Remove variables for loop processing
-                Remove-Variable -Name Canonical, CN, OU, DC -ErrorAction SilentlyContinue
+                $Name.ConvertToCanonicalName()
             }
         }
     }
