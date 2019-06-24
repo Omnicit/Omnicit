@@ -158,6 +158,10 @@ class Test {
                 }
             }
         }
+        else {
+            Write-Verbose -Message 'String does not contain a valid DistinguishedName.'
+            break
+        }
     }
     Test([string]$CommonName, [string]$OrganizationalUnit, [string]$Domain) {
         try {
