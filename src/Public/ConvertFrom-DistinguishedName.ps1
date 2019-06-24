@@ -7,9 +7,6 @@ function ConvertFrom-DistinguishedName {
     The ConvertFrom-DistinguishedName converts one or more strings in form of a DistinguishedName into CanonicalName strings.
     Common usage when working in Exchange and comparing objects in Active Directory.
 
-    .PARAMETER DistinguishedName
-    Specifies the DistinguishedName string to be converted to a CanonicalName string.
-
     .EXAMPLE
     ConvertFrom-DistinguishedName -DistinguishedName 'CN=Roger Johnsson,OU=Users,OU=Department,DC=Contoso,DC=com'
     Contoso.com/Department/Users/Roger Johnsson
@@ -29,6 +26,7 @@ function ConvertFrom-DistinguishedName {
         SupportsShouldProcess
     )]
     param (
+        # Specifies one or more Distinguished Names to be converted to Canonical Names.
         [Parameter(
             Mandatory,
             ValueFromPipeline,
