@@ -45,7 +45,7 @@ class DistinguishedName {
     hidden [string]$_Domain
     [string]$DistinguishedName
 
-    Test() {
+    DistinguishedName() {
         $this | Add-Member -Name FullName -MemberType ScriptProperty -Value {
             return [string]$this._FullName
         } -SecondValue {
@@ -231,6 +231,10 @@ class DistinguishedName {
     }
 
     [string] ConvertToCanonicalName () {
+        if ($null -eq $this.DistinguishedName) {
+            Write-Verbose -Message 'No DistinguishedName was defined.'
+            break
+        }
         [string]$CN = $null
         [Collections.ArrayList]$OU = [Collections.ArrayList]::new()
         [Text.StringBuilder]$Canonical = [Text.StringBuilder]::new()
