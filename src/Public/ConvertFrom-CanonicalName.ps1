@@ -32,7 +32,7 @@ function ConvertFrom-CanonicalName {
 
     This example returns each CanonicalName converted in form of a DistinguishedName.
     #>
-    [OutputType([System.String])]
+    [OutputType([DistinguishedName])]
     [CmdletBinding(
         SupportsShouldProcess = $true
     )]
@@ -43,54 +43,21 @@ function ConvertFrom-CanonicalName {
             ValueFromPipeline = $true,
             HelpMessage = 'Input a valid CanonicalName. Example: "Contoso.com/Department/Users/Roger Johnsson"'
         )]
-        [ValidateNotNullorEmpty()]
-        [string[]]$CanonicalName,
+        [ValidateNotNullOrEmpty()]
+        [CanonicalName[]]$CanonicalName,
 
-        #Specifies that the object is an OrganizationalUnit (OU=) instead of an Person (CN=).
+        # Specifies that the object is an OrganizationalUnit (OU=) instead of an Person (CN=).
+        # Will automatically be an OrganizationalUnit if the CanonicalName string ends with a '/'
         [switch]$OrganizationalUnit
     )
     process {
         foreach ($Name in $CanonicalName) {
             if ($PSCmdlet.ShouldProcess(('{0}' -f $Name, $MyInvocation.MyCommand.Name))) {
-                # Remove trailing or leading slashes.
-                if ($Name -match '\/$' -or $Name -match '^\/') {
-                    [string]$Name = $Name.Trim('/')
+                if ($PSBoundParameters.ContainsKey('OrganizationalUnit') -and $Name.CanonicalName -notmatch '\/$') {
+                    $Name.OrganizationalUnit = '{0}/{0}' -f $Name.OrganizationalUnit, $Name.FullName
+                    $Name.FullName = $null
                 }
-
-                # CanonicalName is only the part of a domain.
-                if ($Name -notmatch '\/') {
-                    [bool]$Domain = $true
-                }
-                # Divide string into an array and replace
-                [string[]]$String = $Name.Split('/')
-
-                # Create the first part of the string.
-                if ($PSBoundParameters.ContainsKey('OrganizationalUnit')) {
-                    [string]$DistinguishedName = ('OU={0}' -f ($String[$String.Count - 1]))
-                }
-                elseif ($Domain) {
-                    [string]$DistinguishedName = ''
-                }
-                else {
-                    [string]$DistinguishedName = ('CN={0}' -f ($String[$String.Count - 1]))
-                }
-
-                # Build string based on the array $String
-                for ($i = $String.Count - 2; $i -ge 1; $i--) {
-                    [string]$DistinguishedName += (',OU={0}' -f ($String[$i]))
-                }
-
-                # Add domain (DC=) to the DistinguishedName String.
-                foreach ($Top in ($String[0].Split('.'))) {
-                    [string]$DistinguishedName += (',DC={0}' -f ($Top))
-                }
-
-                # Remove leading and trailing commas.
-                if ($Domain) {
-                    [string]$DistinguishedName = $DistinguishedName.Trim(',')
-                }
-
-                [string]$DistinguishedName
+                [DistinguishedName]$Name.ConvertToDistinguishedName()
             }
         }
     }
