@@ -21,7 +21,7 @@ function ConvertFrom-DistinguishedName {
 
     This example returns each DistinguishedName converted in form of a CanonicalName.
     #>
-    [OutputType([System.String])]
+    [OutputType([CanonicalName])]
     [CmdletBinding(
         SupportsShouldProcess
     )]
@@ -32,14 +32,14 @@ function ConvertFrom-DistinguishedName {
             ValueFromPipeline,
             HelpMessage = 'Input a valid DistinguishedName. Example: "CN=Roger Johnsson,OU=Users,OU=Department,DC=Contoso,DC=com"'
         )]
-        [ValidateNotNullorEmpty()]
+        [ValidateNotNullOrEmpty()]
         [Alias('DN')]
         [DistinguishedName[]]$DistinguishedName
     )
     process {
         foreach ($Name in $DistinguishedName) {
             if ($PSCmdlet.ShouldProcess(('{0}' -f $Name, $MyInvocation.MyCommand.Name))) {
-                $Name.ConvertToCanonicalName()
+                [CanonicalName]$Name.ConvertToCanonicalName()
             }
         }
     }
