@@ -111,6 +111,10 @@ Task CoreStageFiles -requiredVariables ModuleOutDir, SrcRootDir {
     }
 
     Copy-Item -Path $SrcRootDir\* -Destination $ModuleOutDir -Recurse -Exclude $Exclude -Verbose:$VerbosePreference
+    foreach ($FilePath in @(Get-ChildItem -Path $SrcRootDir\*.ps1 -Recurse)) {
+        $Results = [System.Management.Automation.Language.Parser]::ParseFile($FilePath, [ref]$null, [ref]$null)
+        $Results.EndBlock.Extent.Text | Add-Content -Path "$ModuleOutDir\$ModuleName.psm1"
+    }
 }
 
 Task Build -depends Init, Clean, BeforeBuild, StageFiles, Analyze, Sign, AfterBuild {

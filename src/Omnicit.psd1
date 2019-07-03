@@ -72,6 +72,7 @@
     FunctionsToExport = @(
         'Invoke-ModuleUpdate',
         'Format-StringToUnicodeNormalization',
+        'ConvertFrom-DistinguishedName',
         'ConvertFrom-CanonicalName'
     )
 
