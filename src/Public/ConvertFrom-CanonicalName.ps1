@@ -7,12 +7,6 @@ function ConvertFrom-CanonicalName {
     The ConvertFrom-CanonicalName converts one or more strings in form of a CanonicalName into DistinguishedName strings.
     Common usage when working in Exchange and comparing objects in Active Directory.
 
-    .PARAMETER CanonicalName
-    Specifies the CanonicalName string to be converted to a DistinguishedName string.
-
-    .PARAMETER OrganizationalUnit
-    Specifies that the object is an OrganizationalUnit (OU=) instead of an Person (CN=).
-
     .EXAMPLE
     ConvertFrom-CanonicalName -CanonicalName 'Contoso.com/Department/Users/Roger Johnsson'
     CN=Roger Johnsson,OU=Users,OU=Department,DC=Contoso,DC=com
