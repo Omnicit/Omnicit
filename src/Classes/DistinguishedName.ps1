@@ -1,4 +1,4 @@
-class CommonName {
+﻿class CommonName {
     [ValidatePattern('^CN=[a-z1-9]')]
     [ValidateLength(4, 67)]
     [string]$Value

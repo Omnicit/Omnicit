@@ -1,4 +1,4 @@
-function Invoke-ModuleUpdate {
+﻿function Invoke-ModuleUpdate {
     <#
     .SYNOPSIS
     Update one, several or all installed modules if an update is available from a repository location.
@@ -129,11 +129,7 @@ function Invoke-ModuleUpdate {
             }
         }
         catch {
-            [Exception]$Ex = New-Object -TypeName System.Exception -ArgumentList (' {0} {1}' -f 'Unable to get module information. Error: ', $_.Exception.Message)
-            [Management.Automation.ErrorCategory]$Category = [Management.Automation.ErrorCategory]::InvalidResult
-            [Management.Automation.ErrorRecord]$ErrRecord = New-Object -TypeName System.Management.Automation.ErrorRecord -ArgumentList $Ex, 'ModuleError', $Category, $_.InvocationInfo
-            $PSCmdLet.WriteError($ErrRecord)
-            break
+            $PSCmdlet.ThrowTerminatingError($_)
         }
 
         try {
@@ -150,11 +146,7 @@ function Invoke-ModuleUpdate {
             }
         }
         catch {
-            [Exception]$Ex = New-Object -TypeName System.Exception -ArgumentList (' {0} {1}' -f 'Unable to get repository information. Error: ', $_.Exception.Message)
-            [Management.Automation.ErrorCategory]$Category = [Management.Automation.ErrorCategory]::InvalidResult
-            [Management.Automation.ErrorRecord]$ErrRecord = New-Object -TypeName System.Management.Automation.ErrorRecord -ArgumentList $Ex, 'ModuleError', $Category, $_.InvocationInfo
-            $PSCmdLet.WriteError($ErrRecord)
-            break
+            $PSCmdlet.ThrowTerminatingError($_)
         }
 
     }
@@ -233,11 +225,7 @@ function Invoke-ModuleUpdate {
             }
         }
         catch {
-            [Exception]$Ex = New-Object -TypeName System.Exception -ArgumentList (' {0} {1}' -f 'Unable to get repository information. Error: ', $_.Exception.Message)
-            [Management.Automation.ErrorCategory]$Category = [Management.Automation.ErrorCategory]::InvalidResult
-            [Management.Automation.ErrorRecord]$ErrRecord = New-Object -TypeName System.Management.Automation.ErrorRecord -ArgumentList $Ex, 'ModuleError', $Category, $_.InvocationInfo
-            $PSCmdLet.WriteError($ErrRecord)
-            break
+            $PSCmdlet.ThrowTerminatingError($_)
         }
     }
 }

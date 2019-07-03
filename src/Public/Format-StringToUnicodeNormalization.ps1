@@ -57,11 +57,7 @@
             $String = $Encoding.GetString($Bytes)
         }
         catch {
-            [Exception]$Ex = New-Object -TypeName System.Exception -ArgumentList (' {0} {1}' -f 'Unable to convert byte value to a string. Error: ', $_.Exception.Message)
-            [Management.Automation.ErrorCategory]$Category = [Management.Automation.ErrorCategory]::InvalidResult
-            [Management.Automation.ErrorRecord]$ErrRecord = New-Object -TypeName System.Management.Automation.ErrorRecord -ArgumentList $Ex, 'StringError', $Category, $_.InvocationInfo
-            $PSCmdLet.WriteError($ErrRecord)
-            break
+            $PSCmdlet.ThrowTerminatingError($_)
         }
     }
     process {
@@ -80,11 +76,7 @@
                 }
             }
             catch {
-                [Exception]$Ex = New-Object -TypeName System.Exception -ArgumentList (' {0} {1}' -f 'Unable to format string to unicode. Error: ', $_.Exception.Message)
-                [Management.Automation.ErrorCategory]$Category = [Management.Automation.ErrorCategory]::InvalidResult
-                [Management.Automation.ErrorRecord]$ErrRecord = New-Object -TypeName System.Management.Automation.ErrorRecord -ArgumentList $Ex, 'StringError', $Category, $_.InvocationInfo
-                $PSCmdLet.WriteError($ErrRecord)
-                break
+                $PSCmdlet.ThrowTerminatingError($_)
             }
         }
     }

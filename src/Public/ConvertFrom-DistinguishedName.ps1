@@ -1,4 +1,4 @@
-function ConvertFrom-DistinguishedName {
+﻿function ConvertFrom-DistinguishedName {
     <#
     .SYNOPSIS
     Convert a DistinguishedName string to a CanonicalName string.

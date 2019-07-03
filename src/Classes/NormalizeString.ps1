@@ -1,4 +1,4 @@
-class NormalizeString {
+﻿class NormalizeString {
     [string]$String
     hidden $Encoding = [Text.Encoding]::GetEncoding('ISO-8859-6')
 

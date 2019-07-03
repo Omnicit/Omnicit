@@ -1,4 +1,4 @@
-class CanonicalName {
+﻿class CanonicalName {
     hidden [string]$_FullName
     hidden [string]$_OrganizationalUnit
     hidden [string]$_Domain

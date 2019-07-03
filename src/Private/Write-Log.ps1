@@ -1,4 +1,4 @@
-function Write-Log {
+﻿function Write-Log {
     <#
         .SYNOPSIS
             Used to create and output information from functions
