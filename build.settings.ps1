@@ -1,4 +1,4 @@
-###############################################################################
+﻿###############################################################################
 # Customize these properties and tasks for your module.
 ###############################################################################
 
@@ -35,7 +35,7 @@ Properties {
     # Typically you wouldn't put any file under the src dir unless the file was going to ship with
     # the module. However, if there are such files, add their $SrcRootDir relative paths to the exclude list.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $Exclude = @('Classes', 'Private', 'Public')
+    $Exclude = @('Private', 'Public')
 
     # ------------------ Script analysis properties ---------------------------
 

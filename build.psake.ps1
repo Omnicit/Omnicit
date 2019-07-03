@@ -1,4 +1,4 @@
-#Requires -Modules psake
+﻿#Requires -Modules psake
 
 ##############################################################################
 # DO NOT MODIFY THIS FILE!  Modify build.settings.ps1 instead.
@@ -111,7 +111,7 @@ Task CoreStageFiles -requiredVariables ModuleOutDir, SrcRootDir {
     }
 
     Copy-Item -Path $SrcRootDir\* -Destination $ModuleOutDir -Recurse -Exclude $Exclude -Verbose:$VerbosePreference
-    foreach ($FilePath in @(Get-ChildItem -Path $SrcRootDir\*.ps1 -Recurse)) {
+    foreach ($FilePath in @(Get-ChildItem -Path $SrcRootDir\*.ps1 -Recurse | Where-Object {$_.FullName -notlike "$SrcRootDir\Classes\*.ps1"})) {
         $Results = [System.Management.Automation.Language.Parser]::ParseFile($FilePath, [ref]$null, [ref]$null)
         $Results.EndBlock.Extent.Text | Add-Content -Path "$ModuleOutDir\$ModuleName.psm1"
     }
