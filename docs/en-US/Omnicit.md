@@ -1,15 +1,25 @@
 ---
 Module Name: Omnicit
 Module Guid: ac164fd4-5867-4b95-a13a-67efcff66f12
+Download Help Link: {{ Update Download Link }}
+Help Version: {{ Please enter version of help manually (X.X.X.X) format }}
 Locale: en-US
 ---
 
 # Omnicit Module
 ## Description
-The Omnicit PowerShell Toolbox (OPT) will help with everyday tasks when managing various systems, services and data.
+{{ Fill in the Description }}
 
 ## Omnicit Cmdlets
 ### [ConvertFrom-CanonicalName](ConvertFrom-CanonicalName.md)
+{{ Fill in the Description }}
+
+### [ConvertFrom-DistinguishedName](ConvertFrom-DistinguishedName.md)
+{{ Fill in the Description }}
+
 ### [Format-StringToUnicodeNormalization](Format-StringToUnicodeNormalization.md)
+{{ Fill in the Description }}
+
 ### [Invoke-ModuleUpdate](Invoke-ModuleUpdate.md)
-Update one, several or all installed modules if an update is available from a repository location.
+{{ Fill in the Description }}
+

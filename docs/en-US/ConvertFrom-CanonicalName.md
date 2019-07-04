@@ -13,7 +13,7 @@ Convert a CanonicalName string to a DistinguishedName string.
 ## SYNTAX
 
 ```
-ConvertFrom-CanonicalName [-CanonicalName] <String[]> [-OrganizationalUnit] [-WhatIf] [-Confirm]
+ConvertFrom-CanonicalName [-CanonicalName] <CanonicalName[]> [-OrganizationalUnit] [-WhatIf] [-Confirm]
  [<CommonParameters>]
 ```
 
@@ -58,7 +58,7 @@ This example returns each CanonicalName converted in form of a DistinguishedName
 Specifies the CanonicalName string to be converted to a DistinguishedName string.
 
 ```yaml
-Type: String[]
+Type: CanonicalName[]
 Parameter Sets: (All)
 Aliases:
 
@@ -71,6 +71,7 @@ Accept wildcard characters: False
 
 ### -OrganizationalUnit
 Specifies that the object is an OrganizationalUnit (OU=) instead of an Person (CN=).
+Will automatically be an OrganizationalUnit if the CanonicalName string ends with a '/'
 
 ```yaml
 Type: SwitchParameter
@@ -116,19 +117,13 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable.
-For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
 ## OUTPUTS
 
-### System.String
+### DistinguishedName
 ## NOTES
-Created by:     Philip Haglund
-Organization:   Omnicit AB
-Filename:       ConvertFrom-CanonicalName.ps1
-Version:        1.0.0
-Requirements:   Powershell 4.0
 
 ## RELATED LINKS
