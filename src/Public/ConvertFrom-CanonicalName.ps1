@@ -25,6 +25,9 @@
     CN=Bill T Admin,OU=Users,OU=Tier1,DC=Contoso,DC=com
 
     This example returns each CanonicalName converted in form of a DistinguishedName.
+
+    .Link
+        https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/ConvertFrom-CanonicalName.md
     #>
     [OutputType([DistinguishedName])]
     [CmdletBinding(

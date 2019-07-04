@@ -18,8 +18,10 @@
     Contoso.com/Department/Users/Roger Johnsson
     Contoso.com/Tier1/Users/Bill T Admin
 
-
     This example returns each DistinguishedName converted in form of a CanonicalName.
+
+    .LINK
+    https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/ConvertFrom-DistinguishedName.md
     #>
     [OutputType([CanonicalName])]
     [CmdletBinding(

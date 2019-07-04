@@ -1,7 +1,7 @@
 ---
 external help file: Omnicit-help.xml
 Module Name: Omnicit
-online version:
+online version: https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/ConvertFrom-DistinguishedName.md
 schema: 2.0.0
 ---
 
@@ -39,7 +39,6 @@ ConvertFrom-DistinguishedName -DistinguishedName 'CN=Roger Johnsson,OU=Users,OU=
 
 Contoso.com/Department/Users/Roger Johnsson
 Contoso.com/Tier1/Users/Bill T Admin
-
 
 This example returns each DistinguishedName converted in form of a CanonicalName.
 
@@ -102,3 +101,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## NOTES
 
 ## RELATED LINKS
+
+[https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/ConvertFrom-DistinguishedName.md](https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/ConvertFrom-DistinguishedName.md)
+

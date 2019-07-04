@@ -63,12 +63,8 @@
 
     This example will force install the latest version available for the AzureAD and PSScriptAnalyzer modules.
 
-    .NOTES
-    Created by:     Philip Haglund
-    Organization:   Omnicit AB
-    Filename:       Invoke-ModuleUpdate.ps1
-    Version:        1.0.0
-    Requirements:   Powershell 4.0
+    .LINK
+        https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Invoke-ModuleUpdate.md
     #>
     [CmdletBinding(
         DefaultParameterSetName = 'NoUpdate',
