@@ -5,6 +5,8 @@ Omnicit PowerShell Toolbox - OPT
 
 The Omnicit PowerShell Toolbox (OPT) will help with everyday tasks when managing various systems, services and data.
 
+In the future when new functions is added that has a dependency of Windows PowerShell that will have a separate module, for instance Omnicit.ActiveDirectory.
+
 ## Installation
 
 If you have the [PowerShellGet](https://msdn.microsoft.com/powershell/gallery/readme) module installed
@@ -18,7 +20,6 @@ Install-Module -Name Omnicit -Scope CurrentUser
 
 You can learn how to use the functions by reading our documentation:
 
-- [About Omnicit](docs/en-US/about_Omnicit.help.md)
 - [Cmdlet Overview](docs/en-US/Omnicit.md)
 
 ## Maintainers
