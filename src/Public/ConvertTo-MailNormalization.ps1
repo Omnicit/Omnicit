@@ -1,37 +1,34 @@
-﻿function Format-StringToUnicodeNormalization {
+﻿function ConvertTo-MailNormalization {
     <#
     .SYNOPSIS
-    Format a string for Unicode Normalization using encoding ISO-8859-8.
+    Convert a string for Mail Normalization.
 
     .DESCRIPTION
-    Effectively and fast converts a string to a normalized Unicode string using 'FormD' to remove diacritics (accents).
-    Basicity converts uncommon letters in a string to a it's equivalence letter [a-z] and [A-Z]. Integers will remain intact.
-    'ûüåäöÅÄÖÆÈÉÊËÐÑØßçðł' equals 'uuaaoAAOAEEEEDNO?c?l'
-
-    .PARAMETER InputObject
-    Specifies the string to be converted to Unicode Normalization.
-
-    .PARAMETER RemoveQuestionMark
-    Specifies to remove question mark char caused by unknown conversion.
+    Converts accented, diacritics and most European chars to the corresponding a-z char.
+    Effectively and fast converts a string to a normalized mail string using [Text.NormalizationForm]::FormD and [Text.Encoding]::GetEncoding('ISO-8859-8')
+    Integers will remain intact.
 
     .EXAMPLE
-    Format-StringToUnicodeNormalization -InputObject 'ûüåäöÅÄÖÆÈÉÊËÐÑØßçðł'
+    ConvertTo-MailNormalization -InputObject 'ûüåäöÅÄÖÆÈÉÊËÐÑØßçðł'
     uuaaoAAOAEEEEDNO?c?l
 
-    This example returns the converted value with Unicode Normalization using encoding ISO-8859-8.
+    This example returns a string with the converted Mail Normalization value.
 
     .EXAMPLE
-    Format-StringToUnicodeNormalization -InputObject 'ûüåäöÅÄÖ??ÆÈÉÊ?ËÐÑØßçðł?' -RemoveQuestionMark
+    ConvertTo-MailNormalization -InputObject 'ûüåäöÅÄÖ??ÆÈÉÊ?ËÐÑØßçðł?' -RemoveQuestionMark
     uuaaoAAO??AEEE?EDNO?c?l?
 
-    This example returns the converted value with Unicode Normalization using encoding ISO-8859-8 and removes all questions marks which was a result of chars that were unavailable for conversion.
+    This example returns a string with the converted Mail Normalization value and removes all questions marks which was a result of chars that were unavailable for conversion.
+
+    .LINK
+        https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/ConvertTo-MailNormalization.md
     #>
     [OutputType([System.String])]
     [CmdletBinding(
         SupportsShouldProcess = $true
     )]
     param (
-        # Specifies the string to be converted to Unicode Normalization.
+        # Specifies the string to be converted to Mail Normalization.
         [Parameter(
             Mandatory = $true,
             ValueFromPipeline = $true,
@@ -40,7 +37,7 @@
         [AllowEmptyString()]
         [string]$InputObject,
 
-        # Specifies to remove question mark char caused by unknown conversion.
+        # This example returns a string with the converted Mail Normalization value.
         [switch]$RemoveQuestionMark
 
     )
