@@ -419,17 +419,25 @@ Task Test -depends Build -requiredVariables TestRootDir, ModuleName, CodeCoverag
         if ($CodeCoverageEnabled) {
             $testing.CodeCoverage = $CodeCoverageFiles
         }
-
+        Import-Module -Name $OutDir\$ModuleName -Verbose:$false -ErrorAction Stop
         $testResult = Invoke-Pester @testing
 
         Assert -conditionToCheck (
             $testResult.FailedCount -eq 0
         ) -failureMessage "One or more Pester tests failed, build cannot continue."
 
-        if ($CodeCoverageEnabled) {
-            $testCoverage = [int]($testResult.CodeCoverage.NumberOfCommandsExecuted /
-                                  $testResult.CodeCoverage.NumberOfCommandsAnalyzed * 100)
-            "Pester code coverage on specified files: ${testCoverage}%"
+        try {
+            if ($CodeCoverageEnabled) {
+                $testCoverage = [int]($testResult.CodeCoverage.NumberOfCommandsExecuted /
+                    $testResult.CodeCoverage.NumberOfCommandsAnalyzed * 100)
+                "Pester code coverage on specified files: ${testCoverage}%"
+            }
+        }
+        catch [System.DivideByZeroException] {
+            Write-Verbose -Message 'No code coverage files found'
+        }
+        catch {
+            $PSCmdlet.ThrowTerminatingError($_)
         }
     }
     finally {
