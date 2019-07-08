@@ -5,21 +5,15 @@
 
     .DESCRIPTION
     Converts accented, diacritics and most European chars to the corresponding a-z char.
-    Effectively and fast converts a string to a normalized mail string using [Text.NormalizationForm]::FormD and [Text.Encoding]::GetEncoding('ISO-8859-8')
+    Effectively and fast converts a string to a normalized mail string using [Text.NormalizationForm]::FormD and [Text.Encoding]::GetEncoding('ISO-8859-8').
+    Function created to support legacy email providers that does not support e-mail address internationalization (EAI).
     Integers will remain intact.
 
     .EXAMPLE
-    ConvertTo-MailNormalization -InputObject 'ûüåäöÅÄÖÆÈÉÊËÐÑØßçðł'
-    uuaaoAAOAEEEEDNO?c?l
+    ConvertTo-MailNormalization -InputObject 'ûüåäöÅÄÖÆÈÉÊËÐÑØçł'
+    uuaaoAAOAEEEEDNOcl
 
     This example returns a string with the converted Mail Normalization value.
-
-    .EXAMPLE
-    ConvertTo-MailNormalization -InputObject 'ûüåäöÅÄÖ??ÆÈÉÊ?ËÐÑØßçðł?' -RemoveQuestionMark
-    uuaaoAAO??AEEE?EDNO?c?l?
-
-    This example returns a string with the converted Mail Normalization value and removes all questions marks which was a result of chars that were unavailable for conversion.
-
     .LINK
         https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/ConvertTo-MailNormalization.md
     #>
@@ -35,45 +29,17 @@
             HelpMessage = 'Specify a string to be converted to Unicode Normalization.'
         )]
         [AllowEmptyString()]
-        [string]$InputObject,
-
-        # This example returns a string with the converted Mail Normalization value.
-        [switch]$RemoveQuestionMark
-
+        [string]$InputObject
     )
-    begin {
-        $Encoding = [Text.Encoding]::GetEncoding('ISO-8859-8')
-        $StringBuilder = [Text.StringBuilder]::new()
-
-        if ($PSBoundParameters.ContainsKey('RemoveQuestionMark')) {
-            $Id = [guid]::NewGuid()
-            $InputObject = $InputObject -replace '\?', $Id.Guid
-        }
-        try {
-            $Bytes = [Text.Encoding]::Convert([Text.Encoding]::Unicode, $Encoding, [Text.Encoding]::Unicode.GetBytes($InputObject))
-            $String = $Encoding.GetString($Bytes)
-        }
-        catch {
-            $PSCmdlet.ThrowTerminatingError($_)
-        }
-    }
     process {
-        if ($PSCmdlet.ShouldProcess(('{0}' -f $String, $MyInvocation.MyCommand.Name))) {
-            try {
-                foreach ($Char in $String.Normalize([Text.NormalizationForm]::FormD).GetEnumerator()) {
-                    if ([Globalization.CharUnicodeInfo]::GetUnicodeCategory($Char) -ne [Globalization.UnicodeCategory]::NonSpacingMark) {
-                        $null = $StringBuilder.Append($Char)
-                    }
+        foreach ($String in $InputObject) { 
+            if ($PSCmdlet.ShouldProcess(('{0}' -f $String, $MyInvocation.MyCommand.Name))) {
+                try {
+                    [NormalizeString]::new($String).ToString()
                 }
-                if ($PSBoundParameters.ContainsKey('RemoveQuestionMark')) {
-                    $StringBuilder.ToString() -replace '\?', '' -replace $Id.Guid, '?'
+                catch {
+                    $PSCmdlet.ThrowTerminatingError($_)
                 }
-                else {
-                    $StringBuilder.ToString()
-                }
-            }
-            catch {
-                $PSCmdlet.ThrowTerminatingError($_)
             }
         }
     }
