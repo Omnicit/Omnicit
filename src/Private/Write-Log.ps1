@@ -1,5 +1,4 @@
-# Helper functions
-function Write-Log {
+﻿function Write-Log {
     <#
         .SYNOPSIS
             Used to create and output information from functions
@@ -69,9 +68,3 @@ function Write-Log {
         ('{0} {1} {2}' -f $FormattedDate, $LevelText, $Message) | Out-File -FilePath $Path -Append
     }
 }
-
-# Helper variables
-
-# Dot source the module function files.
-. $PSScriptRoot\Invoke-ModuleUpdate.ps1
-. $PSScriptRoot\Format-StringToUnicodeNormalization.ps1

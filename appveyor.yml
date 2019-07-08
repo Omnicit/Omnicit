@@ -7,11 +7,11 @@ branches:
 
 install:
   - ps: |
-      $null = Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-      $null = Install-Module -Name Pester -MinimumVersion 3.4.0 -Scope CurrentUser -Force
-      $null = Install-Module -Name psake -Scope CurrentUser -Force
-      $null = Install-Module -Name PSScriptAnalyzer -Scope CurrentUser -Force
-      $null = Install-Module -Name platyPS -Scope CurrentUser -Force
+      $null = Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.208 -Force
+      $null = Install-Module -Name Pester -MinimumVersion 4.8.1 -Scope CurrentUser -Force
+      $null = Install-Module -Name psake -MinimumVersion 4.8.0 -Scope CurrentUser -Force
+      $null = Install-Module -Name PSScriptAnalyzer -MinimumVersion 1.18.0 -Scope CurrentUser -Force
+      $null = Install-Module -Name platyPS -MinimumVersion 0.14.0 -Scope CurrentUser -Force
 
 build_script:
   - ps: |

@@ -1,4 +1,4 @@
-#Requires -Modules psake
+﻿#Requires -Modules psake
 
 ##############################################################################
 # DO NOT MODIFY THIS FILE!  Modify build.settings.ps1 instead.
@@ -109,8 +109,17 @@ Task CoreStageFiles -requiredVariables ModuleOutDir, SrcRootDir {
     else {
         Write-Verbose "$($psake.context.currentTaskName) - directory already exists '$ModuleOutDir'."
     }
-
+    [Collections.ArrayList]$PSM1Content = [Collections.ArrayList]::new()
+    $null = $PSM1Content.Add((Get-ChildItem -Path "$SrcRootDir\Classes" -Filter *.ps1 | Sort-Object -Property Name))
+    $null = $PSM1Content.Add((Get-ChildItem -Path "$SrcRootDir\Private" -Filter *.ps1))
+    $PublicFunctions = Get-ChildItem -Path "$SrcRootDir\Public" -Filter *.ps1
+    $null = $PSM1Content.Add($PublicFunctions)
     Copy-Item -Path $SrcRootDir\* -Destination $ModuleOutDir -Recurse -Exclude $Exclude -Verbose:$VerbosePreference
+    foreach ($File in $PSM1Content) {
+        Get-Content -Path $File.FullName -Encoding UTF8 | Out-File -FilePath ('{0}\{1}.psm1' -f $ModuleOutDir, $ModuleName) -Append -Encoding UTF8 -Verbose:$VerbosePreference
+    }
+    Update-ModuleManifest -Path ('{0}\{1}.psd1' -f $ModuleOutDir, $ModuleName) -FunctionsToExport $PublicFunctions.BaseName
+
 }
 
 Task Build -depends Init, Clean, BeforeBuild, StageFiles, Analyze, Sign, AfterBuild {

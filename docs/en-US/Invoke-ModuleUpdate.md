@@ -1,7 +1,7 @@
 ---
 external help file: Omnicit-help.xml
 Module Name: Omnicit
-online version:
+online version: https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Invoke-ModuleUpdate.md
 schema: 2.0.0
 ---
 
@@ -169,17 +169,15 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
 ## OUTPUTS
 
 ## NOTES
-Created by:     Philip Haglund
-Organization:   Omnicit AB
-Filename:       Invoke-ModuleUpdate.ps1
-Version:        1.0.0
-Requirements:   Powershell 4.0
 
 ## RELATED LINKS
+
+[https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Invoke-ModuleUpdate.md](https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Invoke-ModuleUpdate.md)
+
