@@ -12,10 +12,10 @@
     RootModule        = 'Omnicit.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.1.0'
+    ModuleVersion     = '0.1.1'
 
     # Supported PSEditions
-    # CompatiblePSEditions = @()
+    CompatiblePSEditions = 'Desktop', 'Core'
 
     # ID used to uniquely identify this module
     GUID              = 'ac164fd4-5867-4b95-a13a-67efcff66f12'
@@ -95,7 +95,7 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags         = @('Toolbox', 'Office365', 'ActiveDirectory', 'String', 'Data', 'Credential', 'PSEdition_Desktop')
+            Tags         = @('PSEdition_Desktop','PSEdition_Core','Toolbox', 'Office365', 'ActiveDirectory', 'String', 'Data', 'Credential')
 
             # A URL to the license for this module.
             LicenseUri   = 'https://github.com/Omnicit/Omnicit/blob/master/LICENSE'
@@ -110,14 +110,14 @@
             ReleaseNotes = 'https://github.com/Omnicit/Omnicit/blob/master/ReleaseNotes.md'
 
             # Indicates this is a pre-release/testing version of the module.
-            PreRelease = '-alpha102'
+            # PreRelease = ''
 
         } # End of PSData hashtable
 
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    HelpInfoURI       = 'https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/about_Omnicit.help.md'
+    HelpInfoURI       = 'https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Omnicit.md'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
