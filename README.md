@@ -1,7 +1,9 @@
 # Omnicit
 Omnicit PowerShell Toolbox - OPT
 
-[![Build status](https://ci.appveyor.com/api/projects/status/ijobkkrrtk9ltbdi?svg=true)](https://ci.appveyor.com/project/Omnicit/omnicit)
+| Azure Pipelines | PS Gallery | License
+|--------|--------------------|------------|-----------|
+[![Azure Pipelines Build Status][azure-pipeline-badge]][azure-pipeline-build] | [![PowerShell Gallery][psgallery-badge]][psgallery] | [![License][license-badge]][license]
 
 The Omnicit PowerShell Toolbox (OPT) will help with everyday tasks when managing various systems, services and data.
 
