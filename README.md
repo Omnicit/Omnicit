@@ -2,8 +2,8 @@
 Omnicit PowerShell Toolbox - OPT
 
 | Azure Pipelines (master) | PS Gallery | License
-|--------|--------------------|------------|-----------|
-[![Build Status (master)](https://dev.azure.com/omnicit/Omnicit/_apis/build/status/Omnicit.Omnicit?branchName=master)](https://dev.azure.com/omnicit/Omnicit/_build/latest?definitionId=1&branchName=master) | [![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/omnicit.svg)](https://www.powershellgallery.com/packages/Omnicit/) | [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Omnicit/Omnicit/blob/master/LICENSE)
+|---|---|---|
+[![Build Status](https://dev.azure.com/omnicit/Omnicit/_apis/build/status/Omnicit.Omnicit?branchName=master)](https://dev.azure.com/omnicit/Omnicit/_build/latest?definitionId=1&branchName=master) | [![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/omnicit.svg)](https://www.powershellgallery.com/packages/Omnicit/) | [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/Omnicit/Omnicit/blob/master/LICENSE)
 
 The Omnicit PowerShell Toolbox (OPT) will help with everyday tasks when managing various systems, services and data.
 
