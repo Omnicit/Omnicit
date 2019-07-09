@@ -97,13 +97,13 @@ Properties {
 
     # Enable/disable Pester code coverage reporting.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    # $CodeCoverageEnabled = $true
+    $CodeCoverageEnabled = $true
 
     # CodeCoverageFiles specifies the files to perform code coverage analysis on. This property
     # acts as a direct input to the Pester -CodeCoverage parameter, so will support constructions
     # like the ones found here: https://github.com/pester/Pester/wiki/Code-Coverage.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    # $CodeCoverageFiles = (Get-ChildItem "$SrcRootDir\*.ps1", "$SrcRootDir\*.psm1" -Recurse).FullName
+    $CodeCoverageFiles = "$SrcRootDir\*.ps1", "$SrcRootDir\*.psm1"
 
     # -------------------- Publishing properties ------------------------------
 
