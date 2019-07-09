@@ -1,43 +1,64 @@
-
 jobs:
-  - job: Build_PS_Win2016
-    pool:
+  - job: Test_windows2019
+    pool: 
+      vmImage: windows-2019
+    steps: 
+      - powershell: |
+          ./build.ps1 -Task Test -Bootstrap -Verbose
+        displayName: "Running Tests Windows 2019"
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testRunner: NUnit
+          testResultsFiles: '**Release/TestsResults.xml'
+
+  - job: Test_windows2016
+    pool: 
       vmImage: vs2017-win2016
-    steps:
-    - powershell: |
-        ./build.ps1 -Task Test -Bootstrap -Verbose
-      displayName: 'Build and Test'
-    - task: PublishTestResults@2
-      inputs:
-        testRunner: 'NUnit'
-        testResultsFiles: '**/out/testResults.xml'
-        testRunTitle: 'PS_Win2016'
-      displayName: 'Publish Test Results'
+    steps: 
+      - powershell: |
+          ./build.ps1 -Task Test -Bootstrap -Verbose
+        displayName: "Running Tests Windows 2016"
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testRunner: NUnit
+          testResultsFiles: '**Release/TestsResults.xml'
 
-  - job: Build_PSCore_Ubuntu1604
-    pool:
-      vmImage: ubuntu-16.04
-    steps:
-    - script: |
-        pwsh -c './build.ps1 -Task Test -Bootstrap -Verbose'
-      displayName: 'Build and Test'
-    - task: PublishTestResults@2
-      inputs:
-        testRunner: 'NUnit'
-        testResultsFiles: '**/out/testResults.xml'
-        testRunTitle: 'PSCore_Ubuntu1604'
-      displayName: 'Publish Test Results'
+  - job: Test_windows2012R2
+    pool: 
+      vmImage: vs2015-win2012r2
+    steps: 
+      - powershell: |
+          ./build.ps1 -Task Test -Bootstrap -Verbose
+        displayName: "Running Tests Windows 2012R2"
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testRunner: NUnit
+          testResultsFiles: '**/TestsResults.xml'
 
-  - job: Build_PSCore_MacOS1013
-    pool:
-      vmImage: xcode9-macos10.13
-    steps:
-    - script: |
-        pwsh -c './build.ps1 -Task Test -Bootstrap -Verbose'
-      displayName: 'Build and Test'
-    - task: PublishTestResults@2
-      inputs:
-        testRunner: 'NUnit'
-        testResultsFiles: '**/out/testResults.xml'
-        testRunTitle: 'PSCore_MacOS1013'
-      displayName: 'Publish Test Results'
+
+  - job: Test_Ubuntu
+    pool: 
+      vmImage: ubuntu-latest
+    steps: 
+      - script: "pwsh -c ./build.ps1 -Task Test -Bootstrap -Verbose"
+        displayName: "Running Tests Ubuntu"
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testRunner: NUnit
+          testResultsFiles: '**/TestsResults.xml'
+
+  - job: Test_macos
+    pool: 
+      vmImage: macOS-10.14
+    steps: 
+      - script: "pwsh -c ./build.ps1 -Task Test -Bootstrap -Verbose"
+        displayName: "Running Tests MacOS"
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testRunner: NUnit
+          testResultsFiles: '**/TestsResults.xml'
