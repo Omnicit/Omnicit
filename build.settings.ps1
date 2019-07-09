@@ -97,13 +97,13 @@ Properties {
 
     # Enable/disable Pester code coverage reporting.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $CodeCoverageEnabled = $true
+    # $CodeCoverageEnabled = $true
 
     # CodeCoverageFiles specifies the files to perform code coverage analysis on. This property
     # acts as a direct input to the Pester -CodeCoverage parameter, so will support constructions
     # like the ones found here: https://github.com/pester/Pester/wiki/Code-Coverage.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $CodeCoverageFiles = "$SrcRootDir\*.ps1", "$SrcRootDir\*.psm1"
+    # $CodeCoverageFiles = (Get-ChildItem "$SrcRootDir\*.ps1", "$SrcRootDir\*.psm1" -Recurse).FullName
 
     # -------------------- Publishing properties ------------------------------
 
@@ -134,7 +134,7 @@ Properties {
     # This is typically used to write out test results so that they can be sent to a CI
     # system like AppVeyor.
     [System.Diagnostics.CodeAnalysis.SuppressMessage('PSUseDeclaredVarsMoreThanAssigments', '')]
-    $TestOutputFile = $null
+    $TestOutputFile = "$OutDir\TestsResults.xml"
 
     # Specifies the test output format to use when the TestOutputFile property is given
     # a path.  This parameter is passed through to Invoke-Pester's -OutputFormat parameter.
