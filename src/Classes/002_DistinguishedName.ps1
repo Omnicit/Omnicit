@@ -259,7 +259,7 @@ class DistinguishedName {
             }
         }
 
-        [System.Array]::Reverse($OU)
+        $OU.Reverse()
         [Text.StringBuilder]$Canonical.Append([string]($DC -replace '\.$', '/'))
         [Text.StringBuilder]$Canonical.Append(-join $OU)
         [Text.StringBuilder]$Canonical.Append($CN)
