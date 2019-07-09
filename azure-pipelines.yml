@@ -1,17 +1,4 @@
 jobs:
-  - job: Test_windows2019
-    pool: 
-      vmImage: windows-2019
-    steps: 
-      - powershell: |
-          ./build.ps1 -Task Test -Bootstrap -Verbose
-        displayName: "Running Tests Windows 2019"
-      - task: PublishTestResults@2
-        condition: succeededOrFailed()
-        inputs:
-          testRunner: NUnit
-          testResultsFiles: '**Release/TestsResults.xml'
-
   - job: Test_windows2016
     pool: 
       vmImage: vs2017-win2016
@@ -24,20 +11,7 @@ jobs:
         inputs:
           testRunner: NUnit
           testResultsFiles: '**Release/TestsResults.xml'
-
-  - job: Test_windows2012R2
-    pool: 
-      vmImage: vs2015-win2012r2
-    steps: 
-      - powershell: |
-          ./build.ps1 -Task Test -Bootstrap -Verbose
-        displayName: "Running Tests Windows 2012R2"
-      - task: PublishTestResults@2
-        condition: succeededOrFailed()
-        inputs:
-          testRunner: NUnit
-          testResultsFiles: '**/TestsResults.xml'
-
+          testRunTitle: 'PS_Win2016'
 
   - job: Test_Ubuntu
     pool: 
@@ -49,7 +23,8 @@ jobs:
         condition: succeededOrFailed()
         inputs:
           testRunner: NUnit
-          testResultsFiles: '**/TestsResults.xml'
+          testResultsFiles: '**Release/TestsResults.xml'
+          testRunTitle: 'PS_ubuntu-latest'
 
   - job: Test_macos
     pool: 
@@ -61,4 +36,5 @@ jobs:
         condition: succeededOrFailed()
         inputs:
           testRunner: NUnit
-          testResultsFiles: '**/TestsResults.xml'
+          testResultsFiles: '**Release/TestsResults.xml'
+          testRunTitle: 'PS_macOS-10.14'
