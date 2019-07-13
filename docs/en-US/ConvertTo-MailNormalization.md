@@ -41,7 +41,7 @@ Specifies the string to be converted to Mail Normalization.
 ```yaml
 Type: String
 Parameter Sets: (All)
-Aliases:
+Aliases: String
 
 Required: True
 Position: 1
@@ -90,6 +90,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ### System.String
 ## NOTES
+Credits to Johan Åkerlund for the Convert-DiacriticCharacters function.
 
 ## RELATED LINKS
 

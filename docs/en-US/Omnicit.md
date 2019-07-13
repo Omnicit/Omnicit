@@ -1,25 +1,25 @@
 ---
 Module Name: Omnicit
 Module Guid: ac164fd4-5867-4b95-a13a-67efcff66f12
-Download Help Link: {{ Update Download Link }}
-Help Version: {{ Please enter version of help manually (X.X.X.X) format }}
+Download Help Link: https://github.com/Omnicit/Omnicit/tree/master/docs/en-US
+Help Version: 0.1.1
 Locale: en-US
 ---
 
 # Omnicit Module
 ## Description
-{{ Fill in the Description }}
+The Omnicit PowerShell Toolbox (OPT) will help with everyday tasks when managing various systems, services and data.
 
 ## Omnicit Cmdlets
 ### [ConvertFrom-CanonicalName](ConvertFrom-CanonicalName.md)
-{{ Fill in the Description }}
+Convert a CanonicalName string to a DistinguishedName string.
 
 ### [ConvertFrom-DistinguishedName](ConvertFrom-DistinguishedName.md)
-{{ Fill in the Description }}
+Convert a DistinguishedName string to a CanonicalName string.
 
-### [Format-StringToUnicodeNormalization](Format-StringToUnicodeNormalization.md)
-{{ Fill in the Description }}
+### [ConvertTo-MailNormalization](ConvertTo-MailNormalization.md)
+Convert a string for Mail Normalization.
 
 ### [Invoke-ModuleUpdate](Invoke-ModuleUpdate.md)
-{{ Fill in the Description }}
+Update one, several or all installed modules if an update is available from a repository location.
 

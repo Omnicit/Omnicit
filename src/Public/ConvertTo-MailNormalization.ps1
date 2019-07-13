@@ -14,25 +14,30 @@
     uuaaoAAOAEEEEDNOcl
 
     This example returns a string with the converted Mail Normalization value.
+
+    .NOTES
+    Credits to Johan Åkerlund for the Convert-DiacriticCharacters function.
+
     .LINK
         https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/ConvertTo-MailNormalization.md
     #>
     [OutputType([System.String])]
     [CmdletBinding(
-        SupportsShouldProcess = $true
+        SupportsShouldProcess
     )]
     param (
         # Specifies the string to be converted to Mail Normalization.
         [Parameter(
-            Mandatory = $true,
-            ValueFromPipeline = $true,
+            Mandatory,
+            ValueFromPipeline,
             HelpMessage = 'Specify a string to be converted to Unicode Normalization.'
         )]
         [AllowEmptyString()]
+        [Alias('String')]
         [string]$InputObject
     )
     process {
-        foreach ($String in $InputObject) { 
+        foreach ($String in $InputObject) {
             if ($PSCmdlet.ShouldProcess(('{0}' -f $String, $MyInvocation.MyCommand.Name))) {
                 try {
                     [NormalizeString]::new($String).ToString()

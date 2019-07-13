@@ -26,12 +26,12 @@
 
     This example returns each CanonicalName converted in form of a DistinguishedName.
 
-    .Link
+    .LINK
         https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/ConvertFrom-CanonicalName.md
     #>
     [OutputType([DistinguishedName])]
     [CmdletBinding(
-        SupportsShouldProcess = $true
+        SupportsShouldProcess
     )]
     param (
         # Specifies the CanonicalName string to be converted to a DistinguishedName string.
@@ -41,10 +41,11 @@
             HelpMessage = 'Input a valid CanonicalName. Example: "Contoso.com/Department/Users/Roger Johnsson"'
         )]
         [ValidateNotNullOrEmpty()]
+        [Alias('CN')]
         [CanonicalName[]]$CanonicalName,
 
         # Specifies that the object is an OrganizationalUnit (OU=) instead of an Person (CN=).
-        # Will automatically be an OrganizationalUnit if the CanonicalName string ends with a '/'
+        # Will automatically be an OrganizationalUnit if the CanonicalName string ends with a slash '/'
         [switch]$OrganizationalUnit
     )
     process {

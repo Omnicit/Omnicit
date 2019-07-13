@@ -60,7 +60,7 @@ Specifies the CanonicalName string to be converted to a DistinguishedName string
 ```yaml
 Type: CanonicalName[]
 Parameter Sets: (All)
-Aliases:
+Aliases: CN
 
 Required: True
 Position: 1
@@ -71,7 +71,7 @@ Accept wildcard characters: False
 
 ### -OrganizationalUnit
 Specifies that the object is an OrganizationalUnit (OU=) instead of an Person (CN=).
-Will automatically be an OrganizationalUnit if the CanonicalName string ends with a '/'
+Will automatically be an OrganizationalUnit if the CanonicalName string ends with a slash '/'
 
 ```yaml
 Type: SwitchParameter
