@@ -68,27 +68,25 @@
     #>
     [CmdletBinding(
         DefaultParameterSetName = 'NoUpdate',
-        SupportsShouldProcess = $true,
-        HelpUri = 'https://github.com/Omnicit/Omnicit'
+        SupportsShouldProcess
     )]
     param (
         # Specifies names or name patterns of modules that this cmdlet gets. Wildcard characters are permitted.
         [Parameter(
             ParameterSetName = 'NoUpdate',
-            ValueFromPipeline = $true,
+            ValueFromPipeline,
             Position = 0
         )]
         [Parameter(
             ParameterSetName = 'Update',
-            ValueFromPipeline = $true,
+            ValueFromPipeline,
             Position = 0
         )]
-        [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [SupportsWildcards()]
         [string[]]$Name = '*',
 
-        # Switch parameter to invoke the 'Update-Module' cmdlet for the targeted modules. The default behavior without this switch is that the function will only list the current and available versions.
+        # Switch parameter to invoke the 'Update-Module' cmdlet for the targeted modules. The default behavior without this switch is that the function will only list the current and available versions for installed modules.
         [Parameter(
             ParameterSetName = 'Update',
             Position = 1
@@ -109,10 +107,10 @@
         }
 
         try {
-            [array]$Modules = (Get-Module -Name $Name -ListAvailable -ErrorAction Stop -Verbose:$false).Where{$null -ne $_.RepositorySourceLocation}
+            [array]$AllModules = (Get-Module -Name $Name -ListAvailable -ErrorAction Stop -Verbose:$false).Where{ $null -ne $_.RepositorySourceLocation }
 
             # Group all modules to exclude multiple versions.
-            [array]$Modules = $Modules | Group-Object -Property Name
+            [array]$Modules = $AllModules | Group-Object -Property Name
             [int]$TotalCount = $Modules.Count
 
             switch ($Update) {
@@ -129,7 +127,7 @@
         }
 
         try {
-            # To speed up the 'Find-Module' cmdlet and not query all existing repositories, save all existing repositories.
+            # To speed up the 'Find-Module' cmdlet and not query all available session repositories.
             [array][PSCustomObject]$Repositories = Get-PSRepository -ErrorAction Stop
 
             if ($PSCmdLet.ParameterSetName -eq 'Update' -and $Repositories.InstallationPolicy -contains 'Untrusted') {
@@ -154,7 +152,7 @@
             if ($PSCmdlet.ShouldProcess(('{0}' -f $Group.Group[0].Name), $MyInvocation.MyCommand.Name)) {
                 $MultipleVersions = @()
                 switch ($Group.Count) {
-                    ( {$PSITem -gt 1}) {
+                    ( { $PSItem -gt 1 }) {
                         [string[]]$MultipleVersions = $Group.Group.Version[1..($Group.Group.Version.Length)]
                         [PSModuleInfo]$Module = (($Group).Group | Sort-Object -Property Version -Descending)[0]
                     }
@@ -164,7 +162,7 @@
                     }
                 }
                 try {
-                    if ($Repository = ($Repositories.Where{[string]$_.SourceLocation -eq [string]$Module.RepositorySourceLocation}).Name) {
+                    if (($Repository = ($Repositories.Where{ [string]$_.SourceLocation -eq [string]$Module.RepositorySourceLocation }).Name)) {
                         $FindModule = @{
                             Repository  = $Repository
                             ErrorAction = 'Stop'
