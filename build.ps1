@@ -4,7 +4,7 @@
 param(
     # Build task(s) to execute
     [Parameter(ParameterSetName = 'Task', Position = 0)]
-    [string[]]$Task = @('Test', 'BuildHelp'),
+    [string[]]$Task = @('Test', 'BuildHelp', 'GenerateHelpFiles'),
 
     # Bootstrap dependencies
     [switch]$Bootstrap,
