@@ -3,14 +3,14 @@
 )]
 param(
     # Build task(s) to execute
-    [parameter(ParameterSetName = 'Task', Position = 0)]
-    [string[]]$Task = 'Test',
+    [Parameter(ParameterSetName = 'Task', Position = 0)]
+    [string[]]$Task = @('Test', 'BuildHelp'),
 
     # Bootstrap dependencies
     [switch]$Bootstrap,
 
     # List available build tasks
-    [parameter(ParameterSetName = 'Help')]
+    [Parameter(ParameterSetName = 'Help')]
     [switch]$Help
 )
 
