@@ -81,6 +81,10 @@ Properties {
 Task default -depends Build
 
 Task Init -requiredVariables OutDir {
+    "`nSTATUS: Testing with PowerShell $($PSVersionTable.PSVersion.Major)"
+    "Build System Details:"
+    Get-Item -Path Env:BH*
+    "`n"
     if (!(Test-Path -LiteralPath $OutDir)) {
         New-Item $OutDir -ItemType Directory -Verbose:$VerbosePreference > $null
     }
