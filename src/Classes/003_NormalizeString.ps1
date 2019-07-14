@@ -1,4 +1,4 @@
-﻿class NormalizeString {    
+﻿class NormalizeString {
     hidden [Text.Encoding]$Encoding = [Text.Encoding]::GetEncoding('ISO-8859-6')
     hidden [string]$_NormalizedString
     hidden [string]$_String
@@ -9,12 +9,11 @@
         } -SecondValue {
             param($Value)
             $this._String = $Value
-            $this.FormatString() 
+            $this.FormatString()
         }
         $this | Add-Member -Name NormalizedString -MemberType ScriptProperty -Value {
             return $this._NormalizedString
-        } 
-        
+        }
     }
     NormalizeString([string]$Value) {
         $this | Add-Member -Name String -MemberType ScriptProperty -Value {
@@ -28,7 +27,6 @@
             return $this._NormalizedString
         }
         $this.String = $Value
-        
     }
     NormalizeString([string]$Value, [Text.Encoding]$Encoding) {
         $this | Add-Member -Name String -MemberType ScriptProperty -Value {
