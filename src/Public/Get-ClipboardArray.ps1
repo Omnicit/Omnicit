@@ -108,6 +108,25 @@
     )]
     [Alias('gca')]
     param (
+        <#
+            Specifies the TypeAccelerator of the clipboard that each input will be converted to. The acceptable values for this parameter are:
+            - DateTime
+            - Int32
+            - Int64
+            - Boolean
+            - Char
+            - Byte
+            - Decimal
+            - Double
+            - Int16
+            - SByte
+            - Single
+            - UInt16
+            - UInt32
+            - UInt64
+            - String
+            - All
+        #>
         [Parameter(
             Position = 0
         )]
@@ -116,10 +135,15 @@
         [Alias('D')]
         [TypeAccelerators[]]$AsType = 'String',
 
+        <#
+            Specifies the a char or a string that will break the input loop.
+            Default value is empty string ''
+        #>
         [Parameter(
             Position = 1
         )]
         [Alias('E')]
+        [AllowEmptyString]
         [string]$BreakString = ''
     )
 
