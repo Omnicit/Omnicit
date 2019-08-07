@@ -42,7 +42,7 @@ class ConvertTypeAccelerator {
             }
         }
         if ($null -eq $this.Object) {
-            $this.Object     = [string]$Object
+            $this.Object = [string]$Object
             $this.ObjectType = $PSTypeAccelerators['String']
         }
     }
