@@ -2,7 +2,7 @@
 <Configuration>
     <ViewDefinitions>
         <View>
-            <Name>Module</Name>
+            <Name>ModuleUpdate</Name>
             <ViewSelectedBy>
                 <TypeName>Omnicit.Invoke.ModuleUpdate</TypeName>
             </ViewSelectedBy>
@@ -34,6 +34,44 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Multiple Versions</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>ObjectProperty</Name>
+            <ViewSelectedBy>
+                <TypeName>Omnicit.Compare.ObjectProperty</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>48</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Width>48</Width>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>PropertyName</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>PropertyMatch</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>ReferenceValue</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>DifferenceValue</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
