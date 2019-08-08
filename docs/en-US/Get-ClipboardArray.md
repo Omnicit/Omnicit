@@ -17,7 +17,7 @@ Get-ClipboardArray [[-BreakString] <String>] [[-AsType] <TypeAccelerators[]>] [<
 ```
 
 ## DESCRIPTION
-Paste an array of objects from the clipboard (CTRL+V) to the variable $ClipboardArray (script scope).
+Paste an array of objects from the clipboard (CTRL+V) to the variable $ClipboardArray (global scope).
 Using the parameter, AsType, can specify what every object should be tried to be converted to.
 If conversion fails every object as a type string.
 The order for the data type conversion is:

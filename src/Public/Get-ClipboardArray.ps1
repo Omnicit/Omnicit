@@ -4,7 +4,7 @@
         Paste an array of objects from the clipboard (CTRL+V)
 
         .DESCRIPTION
-        Paste an array of objects from the clipboard (CTRL+V) to the variable $ClipboardArray (script scope).
+        Paste an array of objects from the clipboard (CTRL+V) to the variable $ClipboardArray (global scope).
         Using the parameter, AsType, can specify what every object should be tried to be converted to.
         If conversion fails every object as a type string.
         The order for the data type conversion is:
@@ -105,6 +105,7 @@
         .LINK
         https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Get-ClipboardArray.md
     #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]
     [CmdletBinding(
         PositionalBinding
     )]
@@ -152,7 +153,7 @@
 
     try {
         $PSTypeAccelerator = Get-PSTypeAccelerator -ErrorAction Stop
-        New-Variable -Name ClipboardArray -Value ([Collections.ArrayList]::new()) -Scope Script -Force -Description 'Variable created from Get-ClipboardArray.' -ErrorAction Stop
+        New-Variable -Name ClipboardArray -Value ([Collections.ArrayList]::new()) -Scope Global -Force -Description 'Variable created from Get-ClipboardArray.' -ErrorAction Stop
         [int32]$n = 0
     }
     catch {
@@ -163,7 +164,7 @@
         $Input = (Read-Host -Prompt "No.[$($n)]")
         $n++
         if ($Input -ne $BreakString) {
-            $null = $script:ClipboardArray.Add([ConvertTypeAccelerator]::new($Input, $AsType, $PSTypeAccelerator))
+            $null = $global:ClipboardArray.Add([ConvertTypeAccelerator]::new($Input, $AsType, $PSTypeAccelerator))
         }
     }
     until ($Input -eq $BreakString)
