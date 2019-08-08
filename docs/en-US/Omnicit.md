@@ -20,6 +20,17 @@ Convert a DistinguishedName string to a CanonicalName string.
 ### [ConvertTo-MailNormalization](ConvertTo-MailNormalization.md)
 Convert a string for Mail Normalization.
 
-### [Invoke-ModuleUpdate](Invoke-ModuleUpdate.md)
-Update one, several or all installed modules if an update is available from a repository location.
+### [ConvertTo-TitleCase](ConvertTo-TitleCase.md)
+Convert a specified string to title case.
 
+### [Compare-ObjectProperty](Compare-ObjectProperty.md)
+Compares two sets of objects and it's properties.
+
+### [Get-ClipboardArray](Get-ClipboardArray.md)
+Paste an array of objects from the clipboard and store content in a variable.
+
+### [Get-WanIPAddress](Get-WanIPAddress.md)
+Retrieves the current external IP address.
+
+### [Get-WanIPAddress](Invoke-ModuleUpdate.md)
+Update one, several or all installed modules if an update is available from a repository location.
