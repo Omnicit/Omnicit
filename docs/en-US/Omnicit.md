@@ -34,3 +34,6 @@ Retrieves the current external IP address.
 
 ### [Get-WanIPAddress](Invoke-ModuleUpdate.md)
 Update one, several or all installed modules if an update is available from a repository location.
+
+### [Start-Mstsc](Start-Mstsc.md)
+Start a Mstsc process using predefined arguments from parameters.
