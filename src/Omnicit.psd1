@@ -9,31 +9,31 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule        = 'Omnicit.psm1'
+    RootModule           = 'Omnicit.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '0.1.1'
+    ModuleVersion        = '0.1.1'
 
     # Supported PSEditions
     CompatiblePSEditions = 'Desktop', 'Core'
 
     # ID used to uniquely identify this module
-    GUID              = 'ac164fd4-5867-4b95-a13a-67efcff66f12'
+    GUID                 = 'ac164fd4-5867-4b95-a13a-67efcff66f12'
 
     # Author of this module
-    Author            = 'Omnicit'
+    Author               = 'Omnicit'
 
     # Company or vendor of this module
-    CompanyName       = 'Omnicit AB'
+    CompanyName          = 'Omnicit AB'
 
     # Copyright statement for this module
-    Copyright         = '(c) 2018 Omnicit AB. All rights reserved.'
+    Copyright            = '(c) 2018 Omnicit AB. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description       = 'Omnicit PowerShell Toolbox - OPT'
+    Description          = 'Omnicit PowerShell Toolbox - OPT'
 
     # Minimum version of the Windows PowerShell engine required by this module
-    PowerShellVersion = '5.1'
+    PowerShellVersion    = '5.1'
 
     # Name of the Windows PowerShell host required by this module
     # PowerShellHostName = ''
@@ -63,22 +63,22 @@
     # TypesToProcess = @()
 
     # Format files (.ps1xml) to be loaded when importing this module
-    FormatsToProcess  = @('Omnicit.format.ps1xml')
+    FormatsToProcess     = @('Omnicit.format.ps1xml')
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @()
+    FunctionsToExport    = @()
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    # CmdletsToExport   = @()
+    CmdletsToExport      = @()
 
     # Variables to export from this module
-    # VariablesToExport = @()
+    VariablesToExport    = @('ClipboardArray')
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    # AliasesToExport   = @()
+    AliasesToExport      = @('gca', 'cop', 'Get-ExternalIP', 'gwan', 'remote')
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -90,12 +90,12 @@
     # FileList = @()
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-    PrivateData       = @{
+    PrivateData          = @{
 
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags         = @('PSEdition_Desktop','PSEdition_Core','Toolbox', 'Office365', 'ActiveDirectory', 'String', 'Data', 'Credential')
+            Tags         = @('PSEdition_Desktop', 'PSEdition_Core', 'Toolbox', 'Office365', 'ActiveDirectory', 'String', 'Data', 'Credential')
 
             # A URL to the license for this module.
             LicenseUri   = 'https://github.com/Omnicit/Omnicit/blob/master/LICENSE'
@@ -117,7 +117,7 @@
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    HelpInfoURI       = 'https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Omnicit.md'
+    HelpInfoURI          = 'https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Omnicit.md'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
