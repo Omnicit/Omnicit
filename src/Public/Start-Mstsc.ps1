@@ -1,25 +1,54 @@
 ﻿function Start-Mstsc {
     <#
     .SYNOPSIS
-    The ConvertTo-TitleCase function converts a specified string to title case.
+    Start a Mstsc process using predefined arguments from parameters.
 
     .DESCRIPTION
-    The ConvertTo-TitleCase function converts a specified string to title case using the Method in (Get-Culture).TextInfo
-    All input strings will be converted to lowercase, because uppercase are considered to be acronyms.
+    The Start-Mstsc function starts a mstsc.exe process with arguments defined from the parameters.
+    Built in check to validate that the current system is Windows.
+    Shadow parameters are not yet implemented.
+    Default port is defined as 3389.
 
     .EXAMPLE
-    ConvertTo-TitleCase -InputObject 'roger johnsson'
-    Roger Johnsson
+    Start-Mstsc -ComputerName Server01
+    Starts mstsc.exe with the arguments /v:Server01:3389
 
-    This example returns the string 'Roger Johnsson' which has capitalized the R and J chars.
-
+    Connects to Server01 using the default RDP port 3389.
     .EXAMPLE
-    'roger johnsson', 'JOHN ROGERSSON' | ConvertTo-TitleCase
-    Roger Johnsson
-    John Rogersson
+    Start-Mstsc -ComputerName Server01 -Admin
+    Starts mstsc.exe with the arguments /v:Server01:3389 /admin
 
-    This example returns the strings 'Roger Johnsson' and 'John Rogersson' which has capitalized the R and J chars.
+    Connects to the console on Server01 using the default RDP port 3389.
+    .EXAMPLE
+    Start-Mstsc -ComputerName Server01 -Admin -Port 9876
+    Starts mstsc.exe with the arguments /v:Server01:9876 /admin
 
+    Connects to the console on Server01 using port 9876.
+    .EXAMPLE
+    Start-Mstsc -ComputerName Server01 -Admin -Port 9876 -FullScreen
+    Starts mstsc.exe with the arguments /v:Server01:9876 /admin /f
+
+    Connects to the console on Server01 using port 9876 with full-screen.
+    .EXAMPLE
+    Start-Mstsc -ComputerName Server01 -Admin -Port 9876 -FullScreen -Prompt
+    Starts mstsc.exe with the arguments /v:Server01:9876 /admin /f /prompt
+
+    Connects to the console on Server01 using port 9876 with full-screen and prompt for credentials.
+    .EXAMPLE
+    Start-Mstsc -ComputerName Server01 -Admin -Port 9876 -FullScreen -Prompt -Public
+    Starts mstsc.exe with the arguments /v:Server01:9876 /admin /f /prompt /public
+
+    Connects to the console on Server01 using port 9876 with full-screen, prompt for credentials and run RDP in public mode.
+    .EXAMPLE
+    Start-Mstsc -ComputerName Server01 -RestrictedAdmin
+    Starts mstsc.exe with the arguments /v:Server01:3389 /restrictedAdmin
+
+    Connects to Server01 using the default RDP port 3389 with Restricted Admin.
+    .EXAMPLE
+    Start-Mstsc -ComputerName Server01 -RemoteGuard
+    Starts mstsc.exe with the arguments /v:Server01:3389 /remoteGuard
+
+    Connects to Server01 using the default RDP port 3389 with Remote Guard.
     .LINK
         https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Start-Mstsc.md
     #>
@@ -30,13 +59,14 @@
         DefaultParameterSetName = 'Default'
     )]
     param(
-        # Specifies the remote PC to which you want to connect.
+        # Specifies the remote PC or Server to which you want to connect.
         [Parameter(
             Position = 1,
-            HelpMessage = 'Enter a Computer name',
+            HelpMessage = 'Specify the remote PC or Server to which you want to connect',
             Mandatory
         )]
-        [string]$ComputerName,
+        [Alias('Server', 'IPAddress', 'Target', 'Node', 'Client')]
+        [string[]]$ComputerName,
 
         # Connects you to the console session for administering a remote PC.
         [Parameter(
@@ -53,22 +83,28 @@
         [ValidateNotNullOrEmpty()]
         [int]$Port = 3389,
 
+        # Starts Remote Desktop in full-screen mode.
+        [Parameter(
+            ParameterSetName = 'FullScreen'
+        )]
+        [switch]$FullScreen,
+
         # Specifies the width of the Remote Desktop window.
         [Parameter(
-            Position = 4,
             ParameterSetName = 'FixedSize',
             Mandatory
         )]
         [Alias('w')]
+        [ValidateRange(1, 10000)]
         [int]$Width,
 
         # Specifies the height of the Remote Desktop window.
         [Parameter(
-            Position = 5,
             ParameterSetName = 'FixedSize',
             Mandatory
         )]
         [Alias('h')]
+        [ValidateRange(1, 10000)]
         [int]$Height,
 
         <#
@@ -76,29 +112,21 @@
         To span across monitors, the monitors must be arranged to form a rectangle.
         #>
         [Parameter(
-            Position = 6,
             ParameterSetName = 'Span'
         )]
         [switch]$Span,
 
         # Configures the Remote Desktop Services session monitor layout to be identical to the current client-side configuration.
         [Parameter(
-            Position = 7,
-            ParameterSetName = 'Multimon'
+            ParameterSetName = 'MultiMonitor'
         )]
         [Alias('multimon')]
         [switch]$MultiMonitor,
 
         # Prompts you for your credentials when you connect to the remote PC.
-        [Parameter(
-            Position = 8
-        )]
         [switch]$Prompt,
 
         # Runs Remote Desktop in public mode.
-        [Parameter(
-            Position = 9
-        )]
         [switch]$Public,
 
         <#
@@ -108,7 +136,7 @@
         This parameter implies the admin parameter.
         #>
         [Parameter(
-            Position = 10
+            ParameterSetName = 'RestrictedAdmin'
         )]
         [switch]$RestrictedAdmin,
 
@@ -118,10 +146,9 @@
         Unlike Restricted Administration mode, Remote Guard also supports connections made from the remote PC by redirecting all requests back to your device.
         #>
         [Parameter(
-            Position = 11
+            ParameterSetName = 'RemoteGuard'
         )]
         [switch]$RemoteGuard
-
     )
     begin {
         if (Get-Variable IsWindows -ErrorAction SilentlyContinue) {
@@ -132,34 +159,45 @@
         else {
             Write-Verbose -Message 'Running Start-Mstsc as Windows PowerShell.'
         }
-    }
-    process {
         $RDTable = @{
-            'ComputerName'    = ('/v:{0}:{1}' -f $ComputerName, $Port)
             'Admin'           = '/admin'
             'Width'           = ('/w:{0}' -f $Width)
             'Height'          = ('/h:{0}' -f $Height)
+            'FullScreen'      = '/f'
             'Span'            = '/span'
             'MultiMonitor'    = '/multimon'
             'Prompt'          = '/prompt'
-            'Public'          = '/Public'
+            'Public'          = '/public'
             'RestrictedAdmin' = '/restrictedAdmin'
             'RemoteGuard'     = '/remoteGuard'
         }
-
-        [Text.StringBuilder]$RDString = [Text.StringBuilder]::new()
-        $null = $RDString.Append("$env:windir\system32\mstsc.exe /f ")
-        foreach ($Key in $PSBoundParameters.Keys) {
-            $null = $RDString.Append($RDTable[$Key])
-            $null = $RDString.Append(' ')
-        }
-
-        if ($PSCmdlet.ShouldProcess($ComputerName)) {
+    }
+    process {
+        foreach ($Computer in $ComputerName) {
             try {
-                & ($RDString.ToString().Trim())
+                $RDTable.Add('ComputerName', ('/v:{0}:{1}' -f $Computer, $Port))
+                [Text.StringBuilder]$RDString = [Text.StringBuilder]::new()
+
+                foreach ($Key in $PSBoundParameters.Keys) {
+                    if ($RDTable[$Key]) {
+                        $null = $RDString.Append($RDTable[$Key])
+                        $null = $RDString.Append(' ')
+                    }
+                }
+                $RDTable.Remove('ComputerName')
+                $RDArgument = $RDString.ToString().Trim()
             }
             catch {
                 $PSCmdlet.ThrowTerminatingError($_)
+            }
+            if ($PSCmdlet.ShouldProcess($RDArgument)) {
+                try {
+                    Write-Verbose -Message ('Starting mstsc with the following arguments: {0}' -f ($RDArgument))
+                    Start-Process -FilePath "$env:windir\system32\mstsc.exe" -ArgumentList ($RDArgument)
+                }
+                catch {
+                    $PSCmdlet.ThrowTerminatingError($_)
+                }
             }
         }
     }
