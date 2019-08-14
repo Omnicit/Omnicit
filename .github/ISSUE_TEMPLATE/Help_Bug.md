@@ -1,6 +1,6 @@
 ---
-name: issue_template
-about: Please describe your issue in as much detail as necessary for us to understand
+name: Help_Bug
+about: Use this template if creating a new issue when you received a bug or need general help.
   it.
 title: ''
 labels: help wanted
