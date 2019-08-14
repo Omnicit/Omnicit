@@ -1,6 +1,6 @@
 ---
-name: pull_request_template
-about: Please describe your changes in detail, unless the title is already descriptive
+name: Pull Request
+about: Use this template when issuing a pull request
   enough.
 title: ''
 labels: ''
