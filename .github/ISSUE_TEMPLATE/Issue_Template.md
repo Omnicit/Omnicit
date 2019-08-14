@@ -1,6 +1,6 @@
 ---
-name: issue_template
-about: Please describe your issue in as much detail as necessary for us to understand
+name: Issue Template
+about: Use this template if creating a new issue.
   it.
 title: ''
 labels: help wanted
