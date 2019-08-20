@@ -138,6 +138,9 @@
                     Set-PSRepository -Name $Repository.Name -InstallationPolicy Trusted -ErrorAction SilentlyContinue -WarningAction SilentlyContinue -Verbose:$false
                 }
             }
+            else {
+                $RepositoryChanged = $false
+            }
         }
         catch {
             $PSCmdlet.ThrowTerminatingError($_)
