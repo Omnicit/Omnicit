@@ -91,34 +91,47 @@
 
     [CmdletBinding(
         SupportsShouldProcess,
-        DefaultParameterSetName = 'Default'
+        DefaultParameterSetName = 'Default',
+        PositionalBinding
     )]
     param (
         # Specifies the path to the source directory to measure.
         [Parameter(
             ValueFromPipeline,
-            ValueFromPipelineByPropertyName
+            ValueFromPipelineByPropertyName,
+            Position = 0
         )]
-        [string[]]$Path = $Pwd.Path,
+        [PSDefaultValue(Help = 'Current path')]
+        [string[]]$Path = ($PWD.Path),
 
         # Specifies the minimum file age (exclude files newer than N date).
         [Parameter(
-            ParameterSetName = 'MinFile'
+            ParameterSetName = 'MinFile',
+            Mandatory,
+            Position = 1
         )]
         [Alias('MinDate')]
-        [datetime]$MinFileAgeDate = [datetime]::Now,
+        [datetime]$MinFileAgeDate,
 
         # Specifies the maximum file age (to exclude files older than N date).
         [Parameter(
-            ParameterSetName = 'MaxFile'
+            ParameterSetName = 'MaxFile',
+            Mandatory,
+            Position = 2
         )]
         [Alias('MaxDate')]
-        [datetime]$MaxFileAgeDate = [datetime]::Now,
+        [datetime]$MaxFileAgeDate,
 
         # Specifies number of fractional digits, and rounds midpoint values to the nearest even number when converting bytes.
+        [Parameter(
+            Position = 3
+        )]
         [int]$BytePrecision = 2,
 
         # Number of threads used for Robocopy.
+        [Parameter(
+            Position = 4
+        )]
         [ValidateRange(1, 128)]
         [int]$RobocopyThreadCount = 16
     )
@@ -145,20 +158,17 @@
 
         [Collections.ArrayList]$RobocopyArgs = @('/BYTES', '/FP', '/L', "/MT:$RobocopyThreadCount", '/NC', '/NDL', '/NJH', '/R:0', '/S', '/TS', '/W:0', '/XJ')
 
+        $DateFilter = $null
         switch ($PSBoundParameters.Keys) {
-            MinFileDate {
+            MinFileAgeDate {
                 $null = $RobocopyArgs.Add("/MINAGE:$($MinFileAgeDate.ToString('yyyyMMdd'))")
-                [string]$DateFilter = ('Minimum file age "{0}"' -f $MinFileAgeDate.ToShortDateString())
+                [string]$DateFilter = ('Minimum file age "{0}".' -f $MinFileAgeDate.ToShortDateString())
             }
-            MaxFileDate {
+            MaxFileAgeDate {
                 $null = $RobocopyArgs.Add("/MAXAGE:$($MaxFileAgeDate.ToString('yyyyMMdd'))")
-                [string]$DateFilter = ('Maximum file age "{0}"' -f $MaxFileAgeDate.ToShortDateString())
-            }
-            Default {
-                [string]$DateFilter = $null
+                [string]$DateFilter = ('Maximum file age "{0}".' -f $MaxFileAgeDate.ToShortDateString())
             }
         }
-        Write-Verbose -Message ('Robocopy arguments: {0}' -f $RobocopyArgs)
         # Thank you 'Joakim Svendsen' for the regular expression examples and inspiration!
         [regex]$HeaderRegex = '\s+Total\s+Copied\s+Skipped\s+Mismatch\s+FAILED\s+Extras'
         [regex]$DirLineRegex = 'Dirs\s+:\s+(?<DirCount>\d+)\s+(?<DirCopiedCount>\d+)(?:\s+\d+){2}\s+(?<DirsFailed>\d+)\s+\d+'
@@ -173,7 +183,7 @@
                 try {
 
                     [datetime]$StartTime = [datetime]::Now
-                    [string]$Summary = (& "$env:windir\system32\robocopy.exe" $InlinePath NULL "$RobocopyArgs")[-8..-1]
+                    [string]$Summary = (& "$env:windir\system32\robocopy.exe" $InlinePath NULL $RobocopyArgs)[-8..-1]
                     [datetime]$EndTime = [datetime]::Now
 
                     if ($Summary -match "$HeaderRegex\s+$DirLineRegex\s+$FileLineRegex\s+$BytesLineRegex\s+$TimeLineRegex\s+$EndedLineRegex") {
