@@ -151,13 +151,24 @@
         [switch]$RemoteGuard
     )
     begin {
-        if (Get-Variable IsWindows -ErrorAction SilentlyContinue) {
-            if (-not $IsWindows) {
-                throw [System.NotSupportedException]::New('Start-Mstsc is only supported on Windows operating systems.')
+        try {
+            $PreviousErrorActionPreference = $ErrorActionPreference
+            $ErrorActionPreference = 'Continue'
+
+            if (Get-Variable IsWindows -ErrorAction SilentlyContinue) {
+                if (-not $IsWindows) {
+                    throw [System.NotSupportedException]::New('Start-Mstsc is only supported on Windows operating systems.')
+                }
+            }
+            else {
+                Write-Verbose -Message 'Running Start-Mstsc as Windows PowerShell.'
             }
         }
-        else {
-            Write-Verbose -Message 'Running Start-Mstsc as Windows PowerShell.'
+        catch {
+            $PSCmdlet.ThrowTerminatingError($_)
+        }
+        finally {
+            $ErrorActionPreference = $PreviousErrorActionPreference
         }
         $RDTable = @{
             'Admin'           = '/admin'

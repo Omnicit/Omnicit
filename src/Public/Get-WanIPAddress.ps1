@@ -24,6 +24,7 @@
 
     try {
         if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME)) {
+            [Net.ServicePointManager]::SecurityProtocol = 12288, 3072, 768, 192 # TLS13, TLS12, TLS11, TLS
             $Json = Invoke-RestMethod -Method Get -Uri 'https://ifconfig.co/json' -ErrorAction Stop
 
             [PSCustomObject]@{
