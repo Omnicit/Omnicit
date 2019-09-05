@@ -8,85 +8,74 @@
         You can specify if you want to display files older than a specific date using the MinFileData parameter.
         If you experience that the function Get-FolderSize (Robocopy) takes time to execute you can increase the threads used by Robocopy with the RobocopyThreadCount parameter.
 
-
         .EXAMPLE
-        'C:\Temp' | Get-FolderSize
+        Get-FolderSize
 
+        Path       TotalBytes  TotalMBytes TotalGBytes FilesCount DirCount TimeElapsed
+        ----       ----------  ----------- ----------- ---------- -------- -----------
+        C:\Windows 18512797867 17655,18    17,24       144492     34036    00:00:12.2813478
 
-        Path               : C:\Temp
-        TotalBytes         : 658241
-        TotalMBytes        : 1
-        TotalGBytes        : 0
-        DirCount           : 1
-        FileCount          : 15
-        DirFailed          : 0
-        FileFailed         : 0
-        FilesOlderThenDate : 2016-08-30 12:39:57
-        TimeElapsed        : 0
-        StartedTime        : 2016-08-30 12:39:57
-        EndedTime          : 2016-08-30 12:39:57
+        This example returns a PSObject with the total folder size for the current location, which in this case in C:\Windows.
+        .EXAMPLE
+        Get-FolderSize -Path \\contoso.com\NETLOGON
 
+        Path                   TotalBytes TotalMBytes TotalGBytes FilesCount DirCount TimeElapsed
+        ----                   ---------- ----------- ----------- ---------- -------- -----------
+        \\contoso.com\NETLOGON 1019904    0,97        0,00        1          2        00:00:00.0157300
 
+        This example returns a PSObject with the total folder size for the specified location path \\contoso.com\NETLOGON.
         .EXAMPLE
         Get-FolderSize -Path \\contoso.net\NETLOGON -BytePrecision 4
 
+        Path                   TotalBytes TotalMBytes TotalGBytes FilesCount DirCount TimeElapsed
+        ----                   ---------- ----------- ----------- ---------- -------- -----------
+        \\contoso.com\NETLOGON 1019904    0,9727      0,0009      1          2        00:00:00.0155598
 
-        Path               : \\contoso.net\NETLOGON
-        TotalBytes         : 872640
-        TotalMBytes        : 0,8322
-        TotalGBytes        : 0,0008
-        DirCount           : 4
-        FileCount          : 6
-        DirFailed          : 0
-        FileFailed         : 0
-        FilesOlderThenDate : 2016-08-30 12:43:16
-        TimeElapsed        : 0,1443
-        StartedTime        : 2016-08-30 12:43:16
-        EndedTime          : 2016-08-30 12:43:16
+        This example returns a PSObject with the total folder size, with for decimals, for the specified location path \\contoso.com\NETLOGON.
+        .EXAMPLE
+        Get-FolderSize -Path C:\Windows -MinFileAgeDate 2019-06-01
+
+        Path       TotalBytes  TotalMBytes TotalGBytes FilesCount DirCount TimeElapsed
+        ----       ----------  ----------- ----------- ---------- -------- -----------
+        C:\Windows 11448807458 10918,43    10,66       101354     34036    00:00:24.1594950
+
+        This example returns a PSObject with the total folder size for the specified location path C:\Windows and excludes files newer than 2019-06-01.
 
         .EXAMPLE
-        Get-FolderSize -Path \\contoso.net\NETLOGON -BytePrecision 4 -MinFileDate 2014-01-01
+        Get-FolderSize -Path C:\Windows -MaxFileAgeDate 2019-06-01
 
+        Path       TotalBytes TotalMBytes TotalGBytes FilesCount DirCount TimeElapsed
+        ----       ---------- ----------- ----------- ---------- -------- -----------
+        C:\Windows 7063990409 6736,75     6,58        43138      34036    00:00:10.2498128
 
-        Path               : \\contoso.net\NETLOGON
-        TotalBytes         : 22147
-        TotalMBytes        : 0,0211
-        TotalGBytes        : 0,0000
-        DirCount           : 4
-        FileCount          : 1
-        DirFailed          : 0
-        FileFailed         : 0
-        FilesOlderThenDate : 2014-01-01 00:00:00
-        TimeElapsed        : 0,1764
-        StartedTime        : 2016-08-30 12:45:08
-        EndedTime          : 2016-08-30 12:45:08
+        This example returns a PSObject with the total folder size for the specified location path C:\Windows and excludes files older than 2019-06-01.
 
         .EXAMPLE
-        Get-FolderSize -Path \\contoso.net\NETLOGON -BytePrecision 4 -MinFileDate 2014-01-01 -FullOutput
+        Get-FolderSize -Path C:\Windows -MaxFileAgeDate 2019-06-01 | Select-Object -Property *
 
+        Path              : C:\Windows
+        TotalBytes        : 7065038985
+        TotalMBytes       : 6737,75
+        TotalGBytes       : 6,58
+        FilesCount        : 43138
+        DirCount          : 34036
+        BytesFailed       : 0
+        DirFailed         : 0
+        FileFailed        : 0
+        TimeElapsed       : 00:00:10.0465934
+        StartedTime       : 2019-09-05 22:28:33
+        EndedTime         : 2019-09-05 22:28:43
+        DateFilter        : Maximum file age "2019-06-01".
+        TotalBytesNoDate  : 18474790494
+        TotalMBytesNoDate : 17618,93
+        TotalGBytesNoDate : 17,21
+        DirCountNoDate    : 34057
+        FileCountNoDate   : 144414
 
-        Path               : \\contoso.net\NETLOGON
-        TotalBytes         : 872640
-        TotalMBytes        : 0,8322
-        TotalGBytes        : 0,0008
-        DateTotalBytes     : 22147
-        DateTotalMBytes    : 0,0211
-        DateTotalGBytes    : 0,0000
-        DirCount           : 4
-        DateDirCount       : 4
-        FileCount          : 6
-        DateFileCount      : 1
-        DirFailed          : 0
-        FileFailed         : 0
-        FilesOlderThenDate : 2014-01-01 00:00:00
-        TimeElapsed        : 0,2149
-        StartedTime        : 2016-08-30 12:45:42
-        EndedTime          : 2016-08-30 12:45:42
-
+        This example returns a PSObject with all available properties extracted from the specified location path C:\Windows and excludes files older than 2019-06-01.
 
         .LINK
         https://github.com/Omnicit/Omnicit/blob/master/docs/en-US/Get-FolderSize.md
-
     #>
 
     [CmdletBinding(
