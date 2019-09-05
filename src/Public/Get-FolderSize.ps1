@@ -140,10 +140,8 @@
             $PreviousErrorActionPreference = $ErrorActionPreference
             $ErrorActionPreference = 'Continue'
 
-            if (Get-Variable IsWindows -ErrorAction SilentlyContinue) {
-                if (-not $IsWindows) {
-                    throw [System.NotSupportedException]::New('Get-FolderSize is only supported on Windows operating systems.')
-                }
+            if (-not $IsWindows -and $PSVersionTable.PSEdition -eq 'Core') {
+                throw [System.NotSupportedException]::New('Get-FolderSize is only supported on Windows operating systems.')
             }
             if (-not (Get-Command -Name "$env:windir\system32\robocopy.exe" -ErrorAction SilentlyContinue)) {
                 throw [System.NotSupportedException]::New("Unable to locate Robocopy.exe in $env:windir\system32. Please verify if Robocopy.exe is available in the specified path.")
