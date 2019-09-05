@@ -2,7 +2,7 @@
 Module Name: Omnicit
 Module Guid: ac164fd4-5867-4b95-a13a-67efcff66f12
 Download Help Link: https://github.com/Omnicit/Omnicit/tree/master/docs/en-US
-Help Version: 0.1.1
+Help Version: 0.1.3
 Locale: en-US
 ---
 
@@ -11,6 +11,9 @@ Locale: en-US
 The Omnicit PowerShell Toolbox (OPT) will help with everyday tasks when managing various systems, services and data.
 
 ## Omnicit Cmdlets
+### [Compare-ObjectProperty](Compare-ObjectProperty.md)
+Compares two sets of objects and it's properties.
+
 ### [ConvertFrom-CanonicalName](ConvertFrom-CanonicalName.md)
 Convert a CanonicalName string to a DistinguishedName string.
 
@@ -23,11 +26,11 @@ Convert a string for Mail Normalization.
 ### [ConvertTo-TitleCase](ConvertTo-TitleCase.md)
 Convert a specified string to title case.
 
-### [Compare-ObjectProperty](Compare-ObjectProperty.md)
-Compares two sets of objects and it's properties.
-
 ### [Get-ClipboardArray](Get-ClipboardArray.md)
 Paste an array of objects from the clipboard and store content in a variable.
+
+### [Get-FolderSize](Get-FolderSize.md)
+Get folder size using Robocopy.exe and displays the output in a PSObject table.
 
 ### [Get-WanIPAddress](Get-WanIPAddress.md)
 Retrieves the current external IP address.
