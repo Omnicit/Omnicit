@@ -55,7 +55,7 @@
     )
 
     begin {
-        $PropertySet = @( 'Name',
+        <#$PropertySet = @( 'Name',
             @{n = 'Position'; e = { if ($_.Position -lt 0) { 'Named' }else { $_.Position } } },
             'Aliases',
             @{n = 'Short'; e = { $_.Name } },
@@ -66,54 +66,61 @@
             @{n = 'Provider'; e = { $_.DynamicProvider } },
             @{n = 'ValueFromPipeline'; e = { $_.ValueFromPipeline } },
             @{n = 'ValueFromPipelineByPropertyName'; e = { $_.ValueFromPipelineByPropertyName } }
-        )
-        function Join-Object {
-            Param(
-                [Parameter(Position = 0)]
-                $First,
+        )#>
+        function Join-ParameterObject {
+            param(
+                [PSObject]$ParameterMetadata,
 
-                [Parameter(ValueFromPipeline = $true, Position = 1)]
-                $Second
+                [object]$ParameterSetData
             )
-            begin {
-                [string[]] $p1 = $First | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name
+
+            # Sort ParameterMetadata and $ParameterSetData objects alphabetical and remove duplicate properties.
+            [string[]]$SortedParameterMetadata = ($ParameterMetadata | Get-Member -MemberType Properties | Sort-Object -Property Name).Name
+            foreach ($ParameterSetDataProperty in ($ParameterSetData | Get-Member -MemberType Properties | Where-Object { $SortedParameterMetadata -notcontains $_.Name }).Name) {
+                $ParameterMetadata | Add-Member -MemberType NoteProperty -Name $ParameterSetDataProperty -Value $ParameterSetData.$ParameterSetDataProperty
             }
-            process {
-                $Output = $First | Select-Object $p1
-                foreach ($p in $Second | Get-Member -MemberType Properties | Where-Object { $p1 -notcontains $_.Name } | Select-Object -ExpandProperty Name) {
-                    Add-Member -InputObject $Output -MemberType NoteProperty -Name $p -Value $Second.("$p")
-                }
-                $Output
+
+            [PSCustomObject]@{
+                PSTypeName                      = 'Omnicit.Get.Parameter'
+                Name                            = $ParameterMetadata.Name
+                Position                        = if ($ParameterMetadata.Position -lt 0) { 'Named' } else { $ParameterMetadata.Position }
+                Aliases                         = $ParameterMetadata.Aliases
+                Short                           = $ParameterMetadata.Name
+                Type                            = $ParameterMetadata.ParameterType.Name
+                ParameterSet                    = $ParamSet
+                Command                         = $Command
+                Mandatory                       = $ParameterMetadata.IsMandatory
+                Provider                        = $ParameterMetadata.DynamicProvider
+                ValueFromPipeline               = $ParameterMetadata.ValueFromPipeline
+                ValueFromPipelineByPropertyName = $ParameterMetadata.ValueFromPipelineByPropertyName
             }
         }
 
         function Add-Parameter {
             [CmdletBinding()]
             param (
-                [Parameter(
-                    Position = 0
-                )]
-                [Hashtable]$Parameter,
+                # Parameter used to provide the Hashtable to the pipeline for the $Parameters variable.
+                [Hashtable]$OutputParameter,
 
-                [Parameter(Position = 1)]
-                [Management.Automation.ParameterMetadata[]]$MoreParameter
+                # The actual parameters from the $Command
+                [Management.Automation.ParameterMetadata[]]$InputParameter
             )
 
-            foreach ($p in $MoreParameter | Where-Object { !$Parameter.ContainsKey($_.Name) } ) {
-                Write-Debug ('INITIALLY: ' + $p.Name)
-                $Parameter.($p.Name) = $p | Select-Object *
+            foreach ($Parameter in $InputParameter | Where-Object { !$OutputParameter.ContainsKey($_.Name) } ) {
+                Write-Debug ('INITIALLY: ' + $Parameter.Name)
+                $OutputParameter.($Parameter.Name) = $Parameter | Select-Object -Property '*'
             }
 
-            [Array]$DynamicParameter = $MoreParameter | Where-Object { $_.IsDynamic }
+            [Array]$DynamicParameter = $InputParameter | Where-Object { $_.IsDynamic }
             if ($DynamicParameter) {
                 foreach ($DynamicParam in $DynamicParameter) {
-                    if (Get-Member -InputObject $Parameter.($DynamicParam.Name) -Name DynamicProvider) {
+                    if (Get-Member -InputObject $OutputParameter.($DynamicParam.Name) -Name DynamicProvider) {
                         Write-Debug ('ADD:' + $DynamicParam.Name + ' ' + $Provider.Name)
-                        $Parameter.($DynamicParam.Name).DynamicProvider += $Provider.Name
+                        $OutputParameter.($DynamicParam.Name).DynamicProvider += $Provider.Name
                     }
                     else {
                         Write-Debug ('CREATE:' + $DynamicParam.Name + ' ' + $Provider.Name)
-                        $Parameter.($DynamicParam.Name) = $Parameter.($DynamicParam.Name) | Select-Object *, @{ n = 'DynamicProvider'; e = { @($Provider.Name) } }
+                        $OutputParameter.($DynamicParam.Name) = $OutputParameter.($DynamicParam.Name) | Select-Object -Property '*', @{ n = 'DynamicProvider'; e = { @($Provider.Name) } }
                     }
                 }
             }
@@ -126,30 +133,40 @@
                 $Cmd = "$ModuleName\$Cmd"
             }
             Write-Verbose "Searching for $Cmd"
-            $Command = @(Get-Command -Name $Cmd)
-
+            try {
+                $Command = @(Get-Command -Name $Cmd -ErrorAction Stop)
+            }
+            catch {
+                $PSCmdlet.ThrowTerminatingError($_)
+            }
             #foreach ($command in $commands) {
-            Write-Verbose "Searching for $Command"
+            #Write-Verbose "Searching for $Command"
             # Resolve aliases (an alias can point to another alias) that's why a while is used and not an if set.
             while ($Command.CommandType -eq 'Alias') {
-                $Command = @(Get-Command -Name ($Command.Definition))[0]
+                try {
+                    $Command = @(Get-Command -Name ($Command.Definition) -ErrorAction Stop)[0]
+                }
+                catch {
+                    continue
+                }
             }
 
-            if (-not $Command) {
+            if ($null -eq $Command) {
+                Write-Warning -Message ('No command with name "{0}" found' -f $Command.Name)
                 continue
             }
 
-            Write-Verbose -Message 'Get-Parameter(s) for {0}\{1}' -f $Command.Source, $Command.Name
+            Write-Verbose -Message ('Get-Parameter(s) for {0}\ {1}' -f $Command.Source, $Command.Name)
 
             $Parameters = @{ }
 
             # Detect provider parameters, i.e. Get-ChildItem.
             $NoProviderParameters = -not $SkipProviderParameters
-            ## Shortcut: assume only the core commands get Provider dynamic parameters
+            # Assume only the core commands have dynamic provider parameters.
             if (-not $SkipProviderParameters -and $Command.Source -eq 'Microsoft.PowerShell.Management') {
-                ## The best I can do is to validate that the command has a parameter which could accept a string path
-                foreach ($param in $Command.Parameters.Values) {
-                    if (([String[]], [String] -contains $param.ParameterType) -and ($param.ParameterSets.Values | Where-Object { $_.Position -ge 0 })) {
+                # Only validate commands that has a parameter which could accept a string path.
+                foreach ($Param in $Command.Parameters.Values) {
+                    if (([String[]], [String] -contains $Param.ParameterType) -and ($Param.ParameterSets.Values | Where-Object { $_.Position -ge 0 })) {
                         $NoProviderParameters = $false
                         break
                     }
@@ -158,91 +175,97 @@
 
             if ($NoProviderParameters) {
                 if ($Command.Parameters) {
-                    Add-Parameters $Parameters $Command.Parameters.Values
+                    Add-Parameter -OutputParameter $Parameters -InputParameter $Command.Parameters.Values
                 }
             }
             else {
                 foreach ($Provider in @(Get-PSProvider)) {
-                    if ($provider.Drives.Length -gt 0) {
-                        $drive = Get-Location -PSProvider $Provider.Name
+                    if ($Provider.Drives.Length -gt 0) {
+                        $Drive = Get-Location -PSProvider $Provider.Name
                     }
                     else {
-                        $drive = '{0}\{1}::\' -f $provider.ModuleName, $provider.Name
+                        $Drive = '{0}\ {1}::\' -f $Provider.ModuleName, $Provider.Name
                     }
-                    Write-Verbose ("Get-Command $command -Args $drive | Select-Object -Expand Parameters")
+                    Write-Verbose ("Get-Command $Command -Args $Drive | Select-Object -Expand Parameters")
 
                     try {
-                        $MoreParameters = (Get-Command $command -Args $drive).Parameters.Values
+                        $MoreParameters = (Get-Command $Command -Args $Drive -ErrorAction Stop).Parameters.Values
                     }
-                    catch { }
+                    catch {
+                        Write-Verbose -Message ('No provider parameters was found for "{0}" and PSProvider "{1}"' -f $Command, $Provider.Name)
+                    }
 
                     if ($MoreParameters.Length -gt 0) {
-                        Add-Parameters $Parameters $MoreParameters
+                        Add-Parameter -OutputParameter $Parameters -InputParameter $MoreParameters
                     }
                 }
+
                 # If for some reason none of the drive paths worked, just use the default parameters
                 if ($Parameters.Length -eq 0) {
                     if ($Command.Parameters) {
-                        Add-Parameters $Parameters $Command.Parameters.Values
+                        Add-Parameter -OutputParameter $Parameters -InputParameter $Command.Parameters.Values
                     }
                 }
             }
 
-            ## Calculate the shortest distinct parameter name -- do this BEFORE removing the common parameters or else.
+            # Calculate the shortest distinct parameter name (alias) - Do this BEFORE removing the common parameters or anything else.
             $Aliases = $Parameters.Values | Select-Object -ExpandProperty Aliases  ## Get defined aliases
             $ParameterNames = $Parameters.Keys + $Aliases
-            foreach ($p in $($Parameters.Keys)) {
-                $short = '^'
-                $aliases = @($p) + @($Parameters.$p.Aliases) | Sort-Object { $_.Length }
-                $shortest = '^' + @($aliases)[0]
+            foreach ($ParameterNameKey in $($Parameters.Keys)) {
+                $Aliases = @($ParameterNameKey) + @($Parameters.$ParameterNameKey.Aliases) | Sort-Object { $_.Length }
+                $Shortest = '^{0}' -f @($Aliases)[0]
 
-                foreach ($name in $aliases) {
-                    $short = '^'
-                    foreach ($char in [char[]]$name) {
-                        $short += $char
-                        $mCount = ($ParameterNames -match $short).Count
-                        if ($mCount -eq 1 ) {
-                            if ($short.Length -lt $shortest.Length) {
-                                $shortest = $short
+                foreach ($Alias in $Aliases) {
+                    $Short = '^'
+                    foreach ($Char in [char[]]$Alias) {
+                        $Short += $Char
+                        $MinimumCharCount = ($ParameterNames -match $Short).Count
+                        if ($MinimumCharCount -eq 1 ) {
+                            if ($Short.Length -lt $Shortest.Length) {
+                                $Shortest = $Short
                             }
                             break
                         }
                     }
                 }
-                if ($shortest.Length -lt @($aliases)[0].Length + 1) {
+                if ($Shortest.Length -lt @($Aliases)[0].Length + 1) {
                     # Overwrite the Aliases with this new value
-                    $Parameters.$p = $Parameters.$p | Add-Member NoteProperty Aliases ($Parameters.$p.Aliases + @("$($shortest.SubString(1))*")) -Force -Passthru
+                    $Parameters.$ParameterNameKey = $Parameters.$ParameterNameKey | Add-Member NoteProperty Aliases ($Parameters.$ParameterNameKey.Aliases + @("$($Shortest.SubString(1))*")) -Force -Passthru
                 }
             }
 
-            # Write-Verbose 'Parameters: $($Parameters.Count)`n $($Parameters | ft | out-string)'
+            # Write-Verbose 'Parameters: $($Parameters.Count)`n $($Parameters | Format-Table | Out-String)'
             $CommonParameters = [string[]][System.Management.Automation.Cmdlet]::CommonParameters
 
-            foreach ($paramset in @($command.ParameterSets | Select-Object -ExpandProperty 'Name')) {
-                $paramset = $paramset | Add-Member -Name IsDefault -MemberType NoteProperty -Value ($paramset -eq $command.DefaultParameterSet) -PassThru
-                foreach ($parameter in $Parameters.Keys | Sort-Object) {
+            foreach ($ParamSet in @($Command.ParameterSets.Name)) {
+                $ParamSet = $ParamSet | Add-Member -Name IsDefault -MemberType NoteProperty -Value ($ParamSet -eq $Command.DefaultParameterSet) -PassThru
+                foreach ($Parameter in $Parameters.Keys | Sort-Object) {
+
                     # Write-Verbose "Parameter: $Parameter"
-                    if (!$Force -and ($CommonParameters -contains $Parameter)) { continue }
-                    if ($Parameters.$Parameter.ParameterSets.ContainsKey($paramset) -or $Parameters.$Parameter.ParameterSets.ContainsKey('__AllParameterSets')) {
-                        if ($Parameters.$Parameter.ParameterSets.ContainsKey($paramset)) {
-                            $output = Join-Object $Parameters.$Parameter $Parameters.$Parameter.ParameterSets.$paramSet
+                    if (-not $Force -and ($CommonParameters -contains $Parameter)) {
+                        continue
+                    }
+                    if ($Parameters.$Parameter.ParameterSets.ContainsKey($ParamSet) -or $Parameters.$Parameter.ParameterSets.ContainsKey('__AllParameterSets')) {
+                        if ($Parameters.$Parameter.ParameterSets.ContainsKey($ParamSet)) {
+                            $Output = Join-ParameterObject -ParameterMetadata $Parameters.$Parameter -ParameterSetData $Parameters.$Parameter.ParameterSets.$ParamSet
                         }
                         else {
-                            $output = Join-Object $Parameters.$Parameter $Parameters.$Parameter.ParameterSets.__AllParameterSets
+                            $Output = Join-ParameterObject -ParameterMetadata $Parameters.$Parameter -ParameterSetData $Parameters.$Parameter.ParameterSets.__AllParameterSets
                         }
 
-                        Write-Output $Output | Select-Object $PropertySet | ForEach-Object {
-                            $null = $_.PSTypeNames.Insert(0, 'System.Management.Automation.ParameterMetadataEx')
-                            # Write-Verbose "$(($_.PSTypeNames.GetEnumerator()) -join ", ")"
-                            $_
-                        } |
-                        Add-Member ScriptMethod ToString { $this.Name } -Force -Passthru |
-                        Where-Object { $(foreach ($pn in $ParameterName) { $_ -like $Pn }) -contains $true } |
-                        Where-Object { $(foreach ($sn in $SetName) { $_.ParameterSet -like $sn }) -contains $true }
+                        #Write-Output $Output | Select-Object $PropertySet | ForEach-Object {
+                        #$null = $_.PSTypeNames.Insert(0, 'System.Management.Automation.ParameterMetadataEx')
+                        # Write-Verbose "$(($_.PSTypeNames.GetEnumerator()) -join ", ")"
+                        #$_
+                        #} |
+                        #Add-Member ScriptMethod ToString { $this.Name } -Force -Passthru |
+                        $Output |
+                            Where-Object { $(foreach ($pn in $ParameterName) { $_ -like $Pn }) -contains $true } |
+                            Where-Object { $(foreach ($sn in $SetName) { $_.ParameterSet -like $sn }) -contains $true }
 
+                    }
                 }
             }
         }
-        #}
     }
 }

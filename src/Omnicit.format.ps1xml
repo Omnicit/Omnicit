@@ -2,7 +2,7 @@
 <Configuration>
     <Controls>
         <Control>
-            <Name>Omnicit.ParameterGroupingFormat</Name>
+            <Name>ParameterGroupingFormat</Name>
             <CustomControl>
                 <CustomEntries>
                     <CustomEntry>
@@ -36,7 +36,7 @@
             </ViewSelectedBy>
             <GroupBy>
                 <PropertyName>ParameterSet</PropertyName>
-                <CustomControlName>Omnicit.ParameterGroupingFormat</CustomControlName>
+                <CustomControlName>ParameterGroupingFormat</CustomControlName>
             </GroupBy>
             <TableControl>
                 <TableHeaders>
