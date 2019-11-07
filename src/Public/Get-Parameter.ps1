@@ -3,13 +3,74 @@
     .SYNOPSIS
         Enumerates the parameters of one or more commands
     .DESCRIPTION
-        Lists all the parameters of a command, by ParameterSet, including their aliases, type, etc.
+        Lists all the parameters of a command, by ParameterSet, including their aliases, type, position, mandatory, etc.
 
-        By default, formats the output to tables grouped by command and parameter set
+        By default, formats the output to tables grouped by command and parameter set.
+
+    .EXAMPLE
+        Get-Parameter -CommandName Select-XML
+
+            Command: Microsoft.PowerShell.Utility/Select-Xml
+            Set: Xml *
+
+        Name                   Aliases      Position Mandatory Pipeline ByName Provider        Type
+        ----                   -------      -------- --------- -------- ------ --------        ----
+        Namespace              {Na*}        Named    False     False    False  All             Hashtable
+        Xml                    {Node, Xm*}  1        True      True     True   All             XmlNode[]
+        XPath                  {XP*}        0        True      False    False  All             String
+
+
+            Command: Microsoft.PowerShell.Utility/Select-Xml
+            Set: Path
+
+        Name                   Aliases      Position Mandatory Pipeline ByName Provider        Type
+        ----                   -------      -------- --------- -------- ------ --------        ----
+        Namespace              {Na*}        Named    False     False    False  All             Hashtable
+        Path                   {Pa*}        1        True      False    True   All             String[]
+        XPath                  {XP*}        0        True      False    False  All             String
+        ...
+
+        This example returns a PSObject which displays the parameters sorted by the Parameter Sets for the cmdlet Select-XML.
+
     .EXAMPLE
         Get-Command Select-Xml | Get-Parameter
+
+            Command: Microsoft.PowerShell.Utility/Select-Xml
+            Set: Xml *
+
+        Name                   Aliases      Position Mandatory Pipeline ByName Provider        Type
+        ----                   -------      -------- --------- -------- ------ --------        ----
+        Namespace              {Na*}        Named    False     False    False  All             Hashtable
+        Xml                    {Node, Xm*}  1        True      True     True   All             XmlNode[]
+        XPath                  {XP*}        0        True      False    False  All             String
+
+
+            Command: Microsoft.PowerShell.Utility/Select-Xml
+            Set: Path
+
+        Name                   Aliases      Position Mandatory Pipeline ByName Provider        Type
+        ----                   -------      -------- --------- -------- ------ --------        ----
+        Namespace              {Na*}        Named    False     False    False  All             Hashtable
+        Path                   {Pa*}        1        True      False    True   All             String[]
+        XPath                  {XP*}        0        True      False    False  All             String
+        ...
+
+        This example returns a PSObject which displays the parameters sorted by the Parameter Sets for the cmdlet Select-XML.
     .EXAMPLE
-        Get-Parameter Select-Xml
+        Get-Parameter -CommandName Select-Xml -SetName Path
+
+            Command: Microsoft.PowerShell.Utility/Select-Xml
+            Set: Path
+
+
+        Name                   Aliases      Position Mandatory Pipeline ByName Provider        Type
+        ----                   -------      -------- --------- -------- ------ --------        ----
+        Namespace              {Na*}        Named    False     False    False  All             Hashtable
+        Path                   {Pa*}        1        True      False    True   All             String[]
+        XPath                  {XP*}        0        True      False    False  All             String
+
+        This example returns a PSObject which displays the parameters filtered by the Parameter Set 'Path' for the cmdlet Select-XML.
+
     .NOTES
         With many thanks to Joel Bennett, Jason Archer, Shay Levy, Hal Rottenberg, Oisin Grehan
     #>
@@ -18,7 +79,7 @@
         DefaultParameterSetName = 'ParameterName'
     )]
     param(
-        # The name of the command to get parameters for
+        # The name of the command to get parameters for.
         [Parameter(
             Position = 1,
             Mandatory,
@@ -27,7 +88,7 @@
         [Alias('Name')]
         [string[]]$CommandName,
 
-        # The parameter name to filter by (allows Wilcards)
+        # The parameter name to filter by (allows Wilcards).
         [Parameter(
             Position = 2,
             ValueFromPipelineByPropertyName,
@@ -35,13 +96,13 @@
         )]
         [string[]]$ParameterName = '*',
 
-        # The ParameterSet name to filter by (allows wildcards)
+        # The ParameterSet name to filter by (allows wildcards).
         [Parameter(
             ValueFromPipelineByPropertyName,
             ParameterSetName = 'FilterSets')]
         [string[]]$SetName = '*',
 
-        # The name of the module which contains the command (this is for scoping)
+        # The name of the module which contains the command (this is for scoping).
         [Parameter(
             ValueFromPipelineByPropertyName
         )]
@@ -55,18 +116,6 @@
     )
 
     begin {
-        <#$PropertySet = @( 'Name',
-            @{n = 'Position'; e = { if ($_.Position -lt 0) { 'Named' }else { $_.Position } } },
-            'Aliases',
-            @{n = 'Short'; e = { $_.Name } },
-            @{n = 'Type'; e = { $_.ParameterType.Name } },
-            @{n = 'ParameterSet'; e = { $paramset } },
-            @{n = 'Command'; e = { $command } },
-            @{n = 'Mandatory'; e = { $_.IsMandatory } },
-            @{n = 'Provider'; e = { $_.DynamicProvider } },
-            @{n = 'ValueFromPipeline'; e = { $_.ValueFromPipeline } },
-            @{n = 'ValueFromPipelineByPropertyName'; e = { $_.ValueFromPipelineByPropertyName } }
-        )#>
         function Join-ParameterObject {
             param(
                 [PSObject]$ParameterMetadata,
@@ -126,7 +175,6 @@
             }
         }
     }
-
     process {
         foreach ($Cmd in $CommandName) {
             if ($ModuleName) {
@@ -139,8 +187,7 @@
             catch {
                 $PSCmdlet.ThrowTerminatingError($_)
             }
-            #foreach ($command in $commands) {
-            #Write-Verbose "Searching for $Command"
+
             # Resolve aliases (an alias can point to another alias) that's why a while is used and not an if set.
             while ($Command.CommandType -eq 'Alias') {
                 try {
@@ -234,7 +281,6 @@
                 }
             }
 
-            # Write-Verbose 'Parameters: $($Parameters.Count)`n $($Parameters | Format-Table | Out-String)'
             $CommonParameters = [string[]][System.Management.Automation.Cmdlet]::CommonParameters
 
             foreach ($ParamSet in @($Command.ParameterSets.Name)) {
@@ -253,16 +299,8 @@
                             $Output = Join-ParameterObject -ParameterMetadata $Parameters.$Parameter -ParameterSetData $Parameters.$Parameter.ParameterSets.__AllParameterSets
                         }
 
-                        #Write-Output $Output | Select-Object $PropertySet | ForEach-Object {
-                        #$null = $_.PSTypeNames.Insert(0, 'System.Management.Automation.ParameterMetadataEx')
-                        # Write-Verbose "$(($_.PSTypeNames.GetEnumerator()) -join ", ")"
-                        #$_
-                        #} |
-                        #Add-Member ScriptMethod ToString { $this.Name } -Force -Passthru |
-                        $Output |
-                            Where-Object { $(foreach ($pn in $ParameterName) { $_ -like $Pn }) -contains $true } |
-                            Where-Object { $(foreach ($sn in $SetName) { $_.ParameterSet -like $sn }) -contains $true }
-
+                        $Output | Where-Object { $(foreach ($pn in $ParameterName) { $_.Name -like $Pn }) -contains $true } |
+                        Where-Object { $(foreach ($sn in $SetName) { $_.ParameterSet -like $sn }) -contains $true }
                     }
                 }
             }
